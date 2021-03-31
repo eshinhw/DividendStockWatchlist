@@ -1,6 +1,6 @@
 import os
 import smtplib
-from app import export
+from app import export, _get_close_price
 import datetime as dt
 import pandas_datareader.data as web
 from email.message import EmailMessage
@@ -28,11 +28,11 @@ if __name__ == '__main__':
     for record in data:
         symbol = record[0]
         target = record[1]
-        current = web.DataReader(symbol, 'yahoo', startDate, endDate)['Adj Close'].iloc[-1].round(2)
+        current = _get_close_price(symbol)
 
         if current <= target:
             sendEmail(EMAIL_ADDRESS, EMAIL_PASSWORD,
-                        'Time to consider buying ' + symbol, 'Recent close price is $' + str(close))
+                        'Time to consider buying ' + symbol, 'Recent close price is $' + str(current))
             print("Alert email about " + symbol + " has been sent!")
 
     print("End of Price Check")

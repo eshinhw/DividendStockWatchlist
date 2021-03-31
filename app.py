@@ -5,7 +5,6 @@ import datetime as dt
 import pandas_datareader.data as web
 
 # from tkinter import ttk
-# from tkinter import filedialog, Text
 
 DB_NAME = 'price_alert.db'
 
@@ -87,6 +86,8 @@ def export():
     data = c.fetchall()
     return data
 
+def refresh():
+    pass
 
 if __name__ == '__main__':
     root = tk.Tk()
