@@ -3,12 +3,14 @@ import sqlite3
 import tkinter as tk
 import datetime as dt
 from tkinter import ttk
+from PIL import Image, ImageTk
+from tkinter import messagebox
 import pandas_datareader.data as web
 
 # GLOBAL VARIABLES
 DB_NAME = 'price_alert.db'
 TABLE_NAME = 'price_data'
-ROOT_GEOMETRY_SIZE = '400x600'
+ROOT_GEOMETRY_SIZE = '380x600'
 MANAGER_GEOMETRY_SIZE = '300x300'
 
 def _get_close_price(symbol):
@@ -20,7 +22,16 @@ def _get_close_price(symbol):
 def _clear_input():
     symbol_input.delete(0, tk.END)
     price_input.delete(0, tk.END)
+    manage_id_input.delete(0, tk.END)
 
+def popup():
+    response = messagebox.askyesnocancel("Deleting All Data...", "Are you sure you want to delete all data?")
+    if response == True:
+        erase()
+    elif response == False:
+        return
+    else:
+        return
 
 def add():
     # INPUT VALIDITY CHECK
@@ -30,12 +41,12 @@ def add():
         return
     if (s == "") or (not str(tp).isnumeric()):
         _clear_input()
-        return
+        return messagebox.showwarning("WARNING!", "INVALID INPUT.")
     try:
         cp = _get_close_price(s)
     except:
         _clear_input()
-        return
+        return messagebox.showwarning("WARNING!", "SYMBOL PROVIDED DOESN'T EXIST.")
 
     db_connect = sqlite3.connect(DB_NAME)
     c = db_connect.cursor()
@@ -48,7 +59,6 @@ def add():
         ) """
               )
 
-
     # Insert into table
     c.execute(f"INSERT INTO {TABLE_NAME} VALUES (:symbol, :target_price, :current_price)",
               {
@@ -60,22 +70,27 @@ def add():
     _clear_input()
     db_connect.commit()
     db_connect.close()
+    query()
 
 def delete():
     db_connect = sqlite3.connect(DB_NAME)
     c = db_connect.cursor()
 
-    c.execute(f"DELETE from {TABLE_NAME} WHERE oid=" + manage_id_input.get())
-    manage_id_input.delete(0, tk.END)
+    c.execute(f"DELETE from {TABLE_NAME} WHERE oid=" + manage_id)
+
 
     db_connect.commit()
     db_connect.close()
+    query()
+    manager.destroy()
 
 def save_change():
     db_connect = sqlite3.connect(DB_NAME)
     c = db_connect.cursor()
 
-    manage_id = manage_id_input.get()
+    print(manage_id)
+    print(symbol_input_manager.get())
+    print(price_input_manager.get())
 
     c.execute(f"""UPDATE {TABLE_NAME} SET
               symbol = :s,
@@ -91,31 +106,30 @@ def save_change():
 
     db_connect.commit()
     db_connect.close()
+    query()
     manager.destroy()
 
 def manage():
-    manage_id = manage_id_input.get()
-    #print(manage_id)
 
-    if len(manage_id) == 0:
-        return
     global manager
+    global manage_id
     global price_input_manager
     global symbol_input_manager
 
+    manage_id = manage_id_input.get()
 
-
+    if len(manage_id) == 0:
+        return
     manager = tk.Tk()
     manager.title("SYMBOL MANAGER")
     manager.geometry(MANAGER_GEOMETRY_SIZE)
-
-
 
     db_connect = sqlite3.connect(DB_NAME)
     c = db_connect.cursor()
 
     c.execute(f"SELECT * FROM {TABLE_NAME} WHERE oid=" + manage_id)
     records = c.fetchall() # fetches all records
+    print(records)
 
     # Create Labels
     symbol_manager = tk.Label(manager, text="SYMBOL", width=15)
@@ -129,18 +143,18 @@ def manage():
     price_input_manager = tk.Entry(manager, width=10)
     price_input_manager.grid(row=1,column=1, pady=10)
 
+    # Loop through results
+    for record in records:
+        symbol_input_manager.insert(0, record[0])
+        price_input_manager.insert(0, record[1])
+
     # Save Change Button in Manager
     save_change_btn = tk.Button(manager, text="SAVE CHANGES", command=save_change, width=20)
     save_change_btn.grid(row=3, column=0, pady=10, columnspan=2)
     del_btn = tk.Button(manager, text="DELETE", command=delete, width=20)
     del_btn.grid(row=4, column=0, pady=10, columnspan=2)
 
-    # Loop through results
-    for record in records:
-        symbol_input_manager.insert(0, record[0])
-        price_input_manager.insert(0, record[1])
-
-    manage_id_input.delete(0, tk.END)
+    _clear_input()
 
 def query():
     db_connect = sqlite3.connect(DB_NAME)
@@ -151,6 +165,8 @@ def query():
 
     # Display Treeview
     my_tree = ttk.Treeview(root)
+    # treeScroll = ttk.Scrollbar(tree_frame)
+    # treeScroll.pack()
 
     # Define Columns
     my_tree['columns'] = ("ID", "SYMBOL", "ALERT PRICE", "CURRENT PRICE")
@@ -177,9 +193,8 @@ def query():
         my_tree.insert(parent='', index='end', iid=i, text="", values=(i+1, symbol_name, tPrice, currPrice))
 
     my_tree.grid(row=5, column=0, columnspan=4, padx=10)
+    #my_tree.pack()
     db_connect.close()
-
-
 
 def export():
     db_connect = sqlite3.connect(DB_NAME)
@@ -190,13 +205,47 @@ def export():
     return data
 
 def refresh():
-    pass
+    db_connect = sqlite3.connect(DB_NAME)
+    c = db_connect.cursor()
+
+    records = c.fetchall()
+
+    for i in range(len(records)):
+
+        c.execute(f"""UPDATE {TABLE_NAME} SET
+                current_price = :cp
+                WHERE oid = :oid
+                """,
+                {
+                    'cp': _get_close_price(records[i][0]),
+                    'oid': i
+                })
+
+    db_connect.commit()
+    db_connect.close()
+    query()
+
+def erase():
+    db_connect = sqlite3.connect(DB_NAME)
+    c = db_connect.cursor()
+
+    c.execute(f"DELETE FROM {TABLE_NAME}")
+
+    db_connect.commit()
+    db_connect.close()
+    query()
+
 
 if __name__ == '__main__':
 
     root = tk.Tk()
     root.title("PY STOCK PRICE ALERT")
     root.geometry(ROOT_GEOMETRY_SIZE)
+    #photo = tk.PhotoImage(file = "img/icon.png")
+    ico = Image.open("img/icon.png")
+    photo = ImageTk.PhotoImage(ico)
+    root.iconphoto(False, photo)
+    #root.iconphoto(False, photo)
 
     # Create Labels
     symbol = tk.Label(root, text="STOCK SYMBOL", width=15)
@@ -219,8 +268,10 @@ if __name__ == '__main__':
     addButton.grid(row=2,column=0, columnspan=2, padx=10, pady=5)
     manage_btn = tk.Button(root, text="MANAGE SYMBOL ID", command=manage, width=50)
     manage_btn.grid(row=4, column=0, columnspan=2, padx=10, pady=5)
-    refresh_btn = tk.Button(root, text="REFRESH TABLE", command=query, width=50)
-    refresh_btn.grid(row=6, column=0, columnspan=2, padx=10, pady=5)
+    refresh_btn = tk.Button(root, text="REFRESH MOST RECENT CLOSE PRICE", command=refresh, width=50)
+    refresh_btn.grid(row=10, column=0, columnspan=2, padx=10, pady=5)
+    reset_btn = tk.Button(root, text="ERASE ALL DATA", command=popup, width=50, fg='red')
+    reset_btn.grid(row=11, column=0, columnspan=2, padx=10, pady=5)
 
     query()
 
