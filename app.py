@@ -8,6 +8,7 @@ import pandas_datareader.data as web
 
 DB_NAME = 'price_alert.db'
 TABLE_NAME = 'price_data'
+GEOMETRY_SIZE = '400x600'
 
 def _get_close_price(symbol):
     startDate = (dt.date.today() - dt.timedelta(days=1)).strftime("%Y-%m-%d")
@@ -91,7 +92,7 @@ def edit():
     global editor
     editor = tk.Tk()
     editor.title("Stock Price Alert")
-    editor.geometry("400x400")
+    editor.geometry(GEOMETRY_SIZE)
 
     edit_id = select_record.get()
 
@@ -155,7 +156,7 @@ def refresh():
 if __name__ == '__main__':
     root = tk.Tk()
     root.title("Stock Price Alert")
-    root.geometry("400x400")
+    root.geometry(GEOMETRY_SIZE)
     # Create Labels
     symbol = tk.Label(root, text="Symbol", width=10)
     symbol.grid(row=0,column=0)
@@ -173,7 +174,7 @@ if __name__ == '__main__':
     select_record.grid(row=5, column=1)
 
     # Create Buttons
-    addButton = tk.Button(root, text="ADD", command=add, width=20)
+    addButton = tk.Button(root, text="ADD", command=add, width=30)
     addButton.grid(row=3,column=0, pady=10, columnspan=2)
     query_btn = tk.Button(root, text="QUERY", command=query, width=20)
     query_btn.grid(row=4, column=0, pady=10, columnspan=2)
