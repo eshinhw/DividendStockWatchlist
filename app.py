@@ -2,10 +2,10 @@ import os
 import sqlite3
 import tkinter as tk
 import datetime as dt
+from tkinter import ttk
 import pandas_datareader.data as web
 
-# from tkinter import ttk
-
+# GLOBAL VARIABLES
 DB_NAME = 'price_alert.db'
 TABLE_NAME = 'price_data'
 GEOMETRY_SIZE = '400x600'
@@ -22,8 +22,8 @@ def _clear_input():
 
 
 def add():
-    conn = sqlite3.connect(DB_NAME)
-    c = conn.cursor()
+    db_connect = sqlite3.connect(DB_NAME)
+    c = db_connect.cursor()
 
     # Create a table
     c.execute(f"""CREATE TABLE IF NOT EXISTS {TABLE_NAME} (
@@ -52,25 +52,27 @@ def add():
                   'current_price': cp
               })
 
+    my_tree.insert(parent='', index='end', iid=0, text="", values=(1, s, tp, cp))
+
     _clear_input()
-    conn.commit()
-    conn.close()
+    db_connect.commit()
+    db_connect.close()
 
 def delete():
-    conn = sqlite3.connect(DB_NAME)
-    c = conn.cursor()
+    db_connect = sqlite3.connect(DB_NAME)
+    c = db_connect.cursor()
 
-    c.execute(f"DELETE from {TABLE_NAME} WHERE oid=" + select_record.get())
-    delete_record.delete(0, tk.END)
+    c.execute(f"DELETE from {TABLE_NAME} WHERE oid=" + manage_id_input.get())
+    manage_id_input.delete(0, tk.END)
 
-    conn.commit()
-    conn.close()
+    db_connect.commit()
+    db_connect.close()
 
 def save_change():
-    conn = sqlite3.connect(DB_NAME)
-    c = conn.cursor()
+    db_connect = sqlite3.connect(DB_NAME)
+    c = db_connect.cursor()
 
-    select_id = select_record.get()
+    select_id = manage_id_input.get()
 
     c.execute(f"""UPDATE {TABLE_NAME} SET
               symbol = :s,
@@ -79,72 +81,75 @@ def save_change():
               WHERE oid = :oid
               """,
               {
-                  's': symbol_input_editor.get(),
-                  'tp': price_input_editor.get(),
+                  's': symbol_input_manager.get(),
+                  'tp': price_input_manager.get(),
                   'oid': select_id
               })
 
-    conn.commit()
-    conn.close()
-    editor.destroy()
+    db_connect.commit()
+    db_connect.close()
+    manager.destroy()
 
-def edit():
-    global editor
-    editor = tk.Tk()
-    editor.title("Stock Price Alert")
-    editor.geometry(GEOMETRY_SIZE)
+def manage():
+    global manager
+    global price_input_manager
+    global symbol_input_manager
 
-    edit_id = select_record.get()
+    manager = tk.Tk()
+    manager.title("Stock Symbol Manager")
+    manager.geometry(GEOMETRY_SIZE)
+
+    manage_id = manage_id_input.get()
 
 
-    conn = sqlite3.connect(DB_NAME)
-    c = conn.cursor()
+    db_connect = sqlite3.connect(DB_NAME)
+    c = db_connect.cursor()
 
-    c.execute(f"SELECT * FROM {TABLE_NAME} WHERE oid=" + edit_id)
+    c.execute(f"SELECT * FROM {TABLE_NAME} WHERE oid=" + manage_id)
     records = c.fetchall() # fetches all records
 
     # Create Labels
-    symbol_editor = tk.Label(editor, text="Symbol", width=10)
-    symbol_editor.grid(row=0,column=0)
-    target_price_editor = tk.Label(editor, text="Target Price", width=10)
-    target_price_editor.grid(row=1,column=0)
-
-    global symbol_input_editor
-    global price_input_editor
+    symbol_manager = tk.Label(manager, text="Symbol", width=10)
+    symbol_manager.grid(row=0,column=0)
+    target_price_manager = tk.Label(manager, text="Target Price", width=10)
+    target_price_manager.grid(row=1,column=0)
 
     # Create Entry
-    symbol_input_editor = tk.Entry(editor)
-    symbol_input_editor.grid(row=0, column=1)
-    price_input_editor = tk.Entry(editor)
-    price_input_editor.grid(row=1,column=1)
+    symbol_input_manager = tk.Entry(manager)
+    symbol_input_manager.grid(row=0, column=1)
+    price_input_manager = tk.Entry(manager)
+    price_input_manager.grid(row=1,column=1)
 
-    save_change_btn = tk.Button(editor, text="SAVE CHANGE", command=save_change, width=20)
+    # Save Change Button in Manager
+    save_change_btn = tk.Button(manager, text="SAVE CHANGE", command=save_change, width=20)
     save_change_btn.grid(row=3, column=0, pady=10, columnspan=2)
+    del_btn = tk.Button(manager, text="DELETE", command=delete, width=30)
+    del_btn.grid(row=6, column=0, columnspan=3)
 
     # Loop through results
     for record in records:
-        symbol_input_editor.insert(0, record[0])
-        price_input_editor.insert(0, record[1])
+        symbol_input_manager.insert(0, record[0])
+        price_input_manager.insert(0, record[1])
 
-def query():
-    conn = sqlite3.connect(DB_NAME)
-    c = conn.cursor()
+# def query():
+#     db_db_connectect = sqlite3.db_db_connectectect(DB_NAME)
+#     c = db_db_connectect.cursor()
 
-    c.execute(f"SELECT *, oid FROM {TABLE_NAME}")
-    records = c.fetchall() # fetches all records
-    output_records = ""
-    for record in records:
-        print(record)
-        output_records += str(record[3]) + '\t' + str(record[0]) + '\t' + str(record[1]) + '\t' + str(record[2]) + '\n'
+#     c.execute(f"SELECT *, oid FROM {TABLE_NAME}")
+#     records = c.fetchall() # fetches all records
+#     output_records = ""
+#     for record in records:
+#         print(record)
+#         output_records += str(record[3]) + '\t' + str(record[0]) + '\t' + str(record[1]) + '\t' + str(record[2]) + '\n'
 
-    outputLabel = tk.Label(root, text=output_records)
-    outputLabel.grid(row=8, column=0)
+#     outputLabel = tk.Label(root, text=output_records)
+#     outputLabel.grid(row=8, column=0, columnspan=5)
 
-    conn.close()
+#     db_db_connectect.close()
 
 def export():
-    conn = sqlite3.connect(DB_NAME)
-    c = conn.cursor()
+    db_connect = sqlite3.connect(DB_NAME)
+    c = db_connect.cursor()
 
     c.execute(f"SELECT * FROM {TABLE_NAME}")
     data = c.fetchall()
@@ -154,49 +159,58 @@ def refresh():
     pass
 
 if __name__ == '__main__':
+
     root = tk.Tk()
     root.title("Stock Price Alert")
     root.geometry(GEOMETRY_SIZE)
+
     # Create Labels
-    symbol = tk.Label(root, text="Symbol", width=10)
-    symbol.grid(row=0,column=0)
+    symbol = tk.Label(root, text="Stock Symbol", width=10)
+    symbol.grid(row=0,column=0, pady=10)
     target_price = tk.Label(root, text="Target Price", width=10)
-    target_price.grid(row=1,column=0)
-    select_label = tk.Label(root, text="Select ID", width=10)
-    select_label.grid(row=5, column=0)
+    target_price.grid(row=1,column=0, pady=10)
+    manage_id_label = tk.Label(root, text="Manage ID", width=10)
+    manage_id_label.grid(row=3, column=0, pady=10)
 
     # Create Entry
-    symbol_input = tk.Entry()
+    symbol_input = tk.Entry(root, width=20)
     symbol_input.grid(row=0, column=1)
-    price_input = tk.Entry()
+    price_input = tk.Entry(root, width=20)
     price_input.grid(row=1,column=1)
-    select_record = tk.Entry()
-    select_record.grid(row=5, column=1)
+    manage_id_input = tk.Entry(root, width=20)
+    manage_id_input.grid(row=3, column=1)
 
     # Create Buttons
-    addButton = tk.Button(root, text="ADD", command=add, width=30)
-    addButton.grid(row=3,column=0, pady=10, columnspan=2)
-    query_btn = tk.Button(root, text="QUERY", command=query, width=20)
-    query_btn.grid(row=4, column=0, pady=10, columnspan=2)
-    del_btn = tk.Button(root, text="DELETE", command=delete, width=20)
-    del_btn.grid(row=6, column=0, pady=10, columnspan=2)
-    update_btn = tk.Button(root, text="UPDATE", command=edit, width=20)
-    update_btn.grid(row=7, column=0, pady=10, columnspan=2)
-    # query_header = tk.Label(root, text="Symbol" + '\t' +"Target Price")
-    # query_header.grid(row=7, column=0)
+    addButton = tk.Button(root, text="ADD", command=add, width=50)
+    addButton.grid(row=2,column=0, columnspan=2, padx=10, pady=5)
+    manage_btn = tk.Button(root, text="MANAGE", command=manage, width=50)
+    manage_btn.grid(row=4, column=0, columnspan=2, padx=10, pady=5)
 
+    # Display Treeview
+    my_tree = ttk.Treeview(root)
 
-    # tree = ttk.Treeview(root, column=("c1", "c2"), show='headings')
-    # tree.column("#1", anchor=tk.CENTER)
+    # Define Columns
+    my_tree['columns'] = ("ID", "Symbol", "Target Price", "Current Price")
 
-    # tree.heading("#1", text="SYMBOL")
+    # Format Columns
+    my_tree.column("#0", width=0, stretch=tk.NO)
+    my_tree.column("ID", anchor=tk.CENTER, width=60)
+    my_tree.column("Symbol", anchor=tk.CENTER, width=100)
+    my_tree.column("Target Price", anchor=tk.CENTER, width=100)
+    my_tree.column("Current Price", anchor=tk.CENTER, width=100)
 
-    # tree.column("#2", anchor=tk.CENTER)
+    # Create Headings
+    my_tree.heading("#0", text="", anchor=tk.CENTER)
+    my_tree.heading("ID", text="ID", anchor=tk.CENTER)
+    my_tree.heading("Symbol", text="Symbol", anchor=tk.CENTER)
+    my_tree.heading("Target Price", text="Target Price", anchor=tk.CENTER)
+    my_tree.heading("Current Price", text="Current Price", anchor=tk.CENTER)
 
-    # tree.heading("#2", text="TARGET")
-
-    # tree.grid(row=2, column=0, columnspan=6)
-
-
+    # Add Data
+    my_tree.insert(parent='', index='end', iid=0, text="", values=(1, 'AAPL', 123, 140))
+    my_tree.grid(row=5, column=0, columnspan=4, padx=10)
 
     root.mainloop()
+
+
+
