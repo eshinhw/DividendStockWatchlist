@@ -1,9 +1,9 @@
 import os
 import smtplib
-from app import export, _get_close_price
 import datetime as dt
 import pandas_datareader.data as web
 from email.message import EmailMessage
+from app import export, _get_close_price
 
 def sendEmail(EMAIL_ADDRESS, EMAIL_PASSWORD, subject, contents):
     msg = EmailMessage()
