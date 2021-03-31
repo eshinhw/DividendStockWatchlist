@@ -37,7 +37,14 @@ conn = sqlite3.connect('price_alert.db')
 # Create a cursor
 c = conn.cursor()
 
+# Create a table
 
+c.execute("""CREATE TABLE prices (
+    symbol text,
+    target_price real,
+    current_price real
+    ) """
+          )
 
 
 
@@ -50,26 +57,26 @@ conn.close()
 
 
 
-height = 5
-width = 3
-for i in range(1, height): #Rows
-    for j in range(width): #Columns
-        if (i == 1): # header of the table
-            if j == 0:
-                symbol_header = tk.Label(root, text="Symbol")
-                symbol_header.grid(row=i, column=j)
-                continue
-            if j == 1:
-                target = tk.Label(root, text="Target Price")
-                target.grid(row=i, column=j)
-                continue
-            if j == 2:
-                current = tk.Label(root, text="Current Price")
-                current.grid(row=i, column=j)
-                continue
+# height = 5
+# width = 3
+# for i in range(1, height): #Rows
+#     for j in range(width): #Columns
+#         if (i == 1): # header of the table
+#             if j == 0:
+#                 symbol_header = tk.Label(root, text="Symbol")
+#                 symbol_header.grid(row=i, column=j)
+#                 continue
+#             if j == 1:
+#                 target = tk.Label(root, text="Target Price")
+#                 target.grid(row=i, column=j)
+#                 continue
+#             if j == 2:
+#                 current = tk.Label(root, text="Current Price")
+#                 current.grid(row=i, column=j)
+#                 continue
 
-        content = tk.Label(root, text="abc")
-        content.grid(row=i, column=j)
+#         content = tk.Label(root, text="abc")
+#         content.grid(row=i, column=j)
 
 
 
