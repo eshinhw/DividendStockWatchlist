@@ -7,6 +7,8 @@ import pandas_datareader.data as web
 # from tkinter import ttk
 # from tkinter import filedialog, Text
 
+DB_NAME = 'price_alert.db'
+
 def _get_close_price(symbol):
     startDate = (dt.date.today() - dt.timedelta(days=1)).strftime("%Y-%m-%d")
     endDate = dt.date.today().strftime("%Y-%m-%d")
@@ -18,7 +20,7 @@ def _clear_input():
     price_input.delete(0, tk.END)
 
 def add():
-    conn = sqlite3.connect('price_alert.db')
+    conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
 
     # Create a table
@@ -53,7 +55,7 @@ def add():
     conn.close()
 
 def delete():
-    conn = sqlite3.connect('price_alert.db')
+    conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
 
     #c.execute("DELETE from prices_v2 WHERE symbol=")
@@ -62,7 +64,7 @@ def delete():
     conn.close()
 
 def query():
-    conn = sqlite3.connect('price_alert.db')
+    conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
 
     c.execute("SELECT *, oid FROM prices")
@@ -77,39 +79,49 @@ def query():
 
     conn.close()
 
-root = tk.Tk()
-root.title("Stock Price Alert")
-root.geometry("400x400")
+def export():
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
 
-symbol = tk.Label(root, text="Symbol", width=30)
-symbol.grid(row=0,column=0)
-symbol_input = tk.Entry()
-symbol_input.grid(row=1, column=0)
-target_price = tk.Label(root, text="Target Price", width=30)
-target_price.grid(row=2,column=0)
-price_input = tk.Entry()
-price_input.grid(row=3,column=0)
-addButton = tk.Button(root, text="ADD", command=add, width=30)
-addButton.grid(row=4,column=0, pady=10)
-query_btn = tk.Button(root, text="QUERY", command=query, width=30)
-query_btn.grid(row=5, column=0, pady=10)
-del_btn = tk.Button(root, text="DELETE", command=delete, width=30)
-del_btn.grid(row=6, column=0, pady=10)
-# query_header = tk.Label(root, text="Symbol" + '\t' +"Target Price")
-# query_header.grid(row=7, column=0)
+    c.execute("SELECT * FROM prices")
+    data = c.fetchall()
+    return data
 
 
-# tree = ttk.Treeview(root, column=("c1", "c2"), show='headings')
-# tree.column("#1", anchor=tk.CENTER)
+if __name__ == '__main__':
+    root = tk.Tk()
+    root.title("Stock Price Alert")
+    root.geometry("400x400")
 
-# tree.heading("#1", text="SYMBOL")
+    symbol = tk.Label(root, text="Symbol", width=30)
+    symbol.grid(row=0,column=0)
+    symbol_input = tk.Entry()
+    symbol_input.grid(row=1, column=0)
+    target_price = tk.Label(root, text="Target Price", width=30)
+    target_price.grid(row=2,column=0)
+    price_input = tk.Entry()
+    price_input.grid(row=3,column=0)
+    addButton = tk.Button(root, text="ADD", command=add, width=30)
+    addButton.grid(row=4,column=0, pady=10)
+    query_btn = tk.Button(root, text="QUERY", command=query, width=30)
+    query_btn.grid(row=5, column=0, pady=10)
+    del_btn = tk.Button(root, text="DELETE", command=delete, width=30)
+    del_btn.grid(row=6, column=0, pady=10)
+    # query_header = tk.Label(root, text="Symbol" + '\t' +"Target Price")
+    # query_header.grid(row=7, column=0)
 
-# tree.column("#2", anchor=tk.CENTER)
 
-# tree.heading("#2", text="TARGET")
+    # tree = ttk.Treeview(root, column=("c1", "c2"), show='headings')
+    # tree.column("#1", anchor=tk.CENTER)
 
-# tree.grid(row=2, column=0, columnspan=6)
+    # tree.heading("#1", text="SYMBOL")
+
+    # tree.column("#2", anchor=tk.CENTER)
+
+    # tree.heading("#2", text="TARGET")
+
+    # tree.grid(row=2, column=0, columnspan=6)
 
 
 
-root.mainloop()
+    root.mainloop()
