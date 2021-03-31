@@ -21,6 +21,9 @@ def add():
         ) """
               )
 
+    if (symbol_input.get() == "") or (price_input.get() == ""):
+        return
+
     # Insert into table
 
     c.execute("INSERT INTO prices_v2 VALUES (:symbol, :target_price)",
@@ -31,12 +34,18 @@ def add():
 
     symbol_input.delete(0, tk.END)
     price_input.delete(0, tk.END)
-    # Commit changes
-    conn.commit()
 
-    # Close connection
+    conn.commit()
     conn.close()
 
+def delete():
+    conn = sqlite3.connect('price_alert.db')
+    c = conn.cursor()
+
+    c.execute("DELETE from prices_v2 WHERE symbol=")
+
+    conn.commit()
+    conn.close()
 def query():
     conn = sqlite3.connect('price_alert.db')
     c = conn.cursor()
@@ -63,11 +72,14 @@ target_price.grid(row=0,column=2)
 price_input = tk.Entry()
 price_input.grid(row=0,column=3)
 
-addButton = tk.Button(root, text="Add", padx=45, command=add)
-addButton.grid(row=0,column=4)
+addButton = tk.Button(root, text="Add", command=add)
+addButton.grid(row=0,column=4, padx=10)
 
 query_btn = tk.Button(root, text="Query", command=query)
-query_btn.grid(row=0, column=5, columnspan=2)
+query_btn.grid(row=0, column=5, padx=10)
+
+del_btn = tk.Button(root, text="Delete", command=delete)
+del_btn.grid(row=0, column=6, padx=10)
 
 
 tree = ttk.Treeview(root, column=("c1", "c2"), show='headings')
@@ -79,7 +91,7 @@ tree.column("#2", anchor=tk.CENTER)
 
 tree.heading("#2", text="TARGET")
 
-tree.grid(row=2, column=3)
+tree.grid(row=2, column=0, columnspan=6)
 
 
 
