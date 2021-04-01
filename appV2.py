@@ -11,7 +11,7 @@ import pandas_datareader.data as web
 DB_NAME = 'stocks.db'
 TABLE_NAME = 'prices'
 ROOT_GEOMETRY_SIZE = '380x900'
-MANAGER_GEOMETRY_SIZE = '300x300'
+MANAGER_GEOMETRY_SIZE = '180x180'
 
 
 def _get_close_price(symbol):
@@ -25,7 +25,6 @@ def _get_close_price(symbol):
 def _clear_input():
     symbol_input.delete(0, tk.END)
     price_input.delete(0, tk.END)
-    manage_id_input.delete(0, tk.END)
 
 
 def popup():
@@ -80,25 +79,33 @@ def add():
     query()
 
 
-def delete(oid):
+def delete():
     db_connect = sqlite3.connect(DB_NAME)
     c = db_connect.cursor()
 
-    c.execute(f"DELETE from {TABLE_NAME} WHERE oid=" + str(oid))
+    c.execute(f"DELETE from {TABLE_NAME} WHERE oid=" + str(uid_from_create_manager))
 
     db_connect.commit()
     db_connect.close()
     query()
-    #manager.destroy()
+    manager.destroy()
 
 def remove_selected():
     if len(watchlist_tree.selection()) > 0:
-        uid_watchlist_tree = watchlist_tree.item(watchlist_tree.focus())['values'][0]
-        delete(uid_watchlist_tree)
+        #uid_watchlist_tree = watchlist_tree.item(watchlist_tree.focus())['values'][0]
+        db_connect = sqlite3.connect(DB_NAME)
+        c = db_connect.cursor()
+        c.execute(f"DELETE from {TABLE_NAME} WHERE oid=" + str(uid_from_create_manager))
+        db_connect.commit()
+        db_connect.close()
         watchlist_tree.selection_clear()
     if len(buylist_tree.selection()) > 0:
-        uid_buylist_tree = buylist_tree.item(buylist_tree.focus())['values'][0]
-        delete(uid_buylist_tree)
+        #uid_buylist_tree = buylist_tree.item(buylist_tree.focus())['values'][0]
+        db_connect = sqlite3.connect(DB_NAME)
+        c = db_connect.cursor()
+        c.execute(f"DELETE from {TABLE_NAME} WHERE oid=" + str(uid_from_create_manager))
+        db_connect.commit()
+        db_connect.close()
         buylist_tree.selection_clear()
 
     query()
@@ -117,7 +124,7 @@ def save_change():
               """, {
             's': symbol_input_manager.get(),
             'tp': price_input_manager.get(),
-            'oid': manage_id
+            'oid': uid_from_create_manager
         })
 
     db_connect.commit()
@@ -125,18 +132,12 @@ def save_change():
     query()
     manager.destroy()
 
-
-def manage():
-
+def create_manager(uid):
+    global uid_from_create_manager
+    uid_from_create_manager = uid
     global manager
-    global manage_id
     global price_input_manager
     global symbol_input_manager
-
-    manage_id = manage_id_input.get()
-
-    if len(manage_id) == 0:
-        return
 
     manager = tk.Tk()
     manager.title("MODIFY AN ALERT")
@@ -145,19 +146,8 @@ def manage():
     db_connect = sqlite3.connect(DB_NAME)
     c = db_connect.cursor()
 
-    if len(watchlist_tree.selection()) > 0:
-        uid_watchlist_tree = watchlist_tree.item(watchlist_tree.focus())['values'][0]
-        delete(uid_watchlist_tree)
-        watchlist_tree.selection_clear()
-    if len(buylist_tree.selection()) > 0:
-        uid_buylist_tree = buylist_tree.item(buylist_tree.focus())['values'][0]
-        delete(uid_buylist_tree)
-        buylist_tree.selection_clear()
-
-    c.execute(f"SELECT *, oid FROM {TABLE_NAME} WHERE oid=" + manage_id)
+    c.execute(f"SELECT *, oid FROM {TABLE_NAME} WHERE oid=" + str(uid))
     records = c.fetchall()  # fetches all records
-
-    print(records)
 
     # Create Labels
     symbol_manager = tk.Label(manager, text="SYMBOL", width=15)
@@ -183,8 +173,27 @@ def manage():
                                 width=20)
     save_change_btn.grid(row=3, column=0, pady=10, columnspan=2)
 
+    delete_btn = tk.Button(manager,
+                                text="DELETE THIS ALERT",
+                                command=delete,
+                                width=20)
+    delete_btn.grid(row=4, column=0, pady=10, columnspan=2)
+
     _clear_input()
 
+def manage_watchlist():
+
+    if len(watchlist_tree.selection()) > 0:
+        uid = watchlist_tree.item(watchlist_tree.focus())['values'][0]
+        create_manager(uid)
+        watchlist_tree.selection_clear()
+
+def manage_buylist():
+
+    if len(buylist_tree.selection()) > 0:
+        uid = buylist_tree.item(buylist_tree.focus())['values'][0]
+        create_manager(uid)
+        buylist_tree.selection_clear()
 
 def query():
     db_connect = sqlite3.connect(DB_NAME)
@@ -193,7 +202,6 @@ def query():
     c.execute(f"SELECT *, oid FROM {TABLE_NAME}")
     records = c.fetchall()  # fetches all records
 
-    print(records)
     # Display Treeview
 
     global watchlist_tree
@@ -218,7 +226,6 @@ def query():
     watchlist_tree.heading("CURRENT PRICE",
                            text="CURRENT PRICE",
                            anchor=tk.CENTER)
-
     global buylist_tree
     buylist_tree = ttk.Treeview(root)
 
@@ -261,8 +268,8 @@ def query():
                                   values=(uid, symbol_name, tPrice,
                                           currPrice))
 
-    watchlist_tree.grid(row=6, column=0, columnspan=4, padx=10)
-    buylist_tree.grid(row=9, column=0, columnspan=4, padx=10)
+    watchlist_tree.grid(row=4, column=0, columnspan=4, padx=10)
+    buylist_tree.grid(row=7, column=0, columnspan=4, padx=10)
     db_connect.close()
 
 
@@ -284,7 +291,7 @@ def refresh():
     for i in range(len(records)):
         symbol = records[i][0]
         currPrice = _get_close_price(symbol)
-        oid = records[i][3]
+        uid = records[i][3]
         #print(f"symbol: {symbol} | currPrice: {currPrice} | oid: {records[i][3]}")
         c.execute(
             f"""UPDATE {TABLE_NAME} SET
@@ -292,7 +299,7 @@ def refresh():
                 WHERE oid = :oid
                 """, {
                 'cp': currPrice,
-                'oid': oid
+                'oid': uid
             })
 
     db_connect.commit()
@@ -324,49 +331,61 @@ if __name__ == '__main__':
     symbol.grid(row=0, column=0, pady=10)
     target_price = tk.Label(root, text="ALERT PRICE", width=15)
     target_price.grid(row=1, column=0, pady=10)
-    manage_id_label = tk.Label(root, text="SYMBOL ID", width=15)
-    manage_id_label.grid(row=3, column=0, pady=10)
-    watchlist = tk.Label(root, text="WATCH-LIST", width=20)
-    watchlist.grid(row=5, column=0, pady=10, columnspan=2)
 
-    alert_reached = tk.Label(root, text="BUY-LIST", width=20)
-    alert_reached.grid(row=8, column=0, pady=10, columnspan=2)
+    watchlist = tk.Label(root, text="------------------------------ WATCH-LIST ------------------------------", width=40, font=('Courier', 10, 'bold'))
+    watchlist.grid(row=3, column=0, pady=10, columnspan=2)
+
+    alert_reached = tk.Label(root, text="------------------------------ BUY-LIST ------------------------------", width=40, font=('Courier', 10, 'bold'))
+    alert_reached.grid(row=6, column=0, pady=10, columnspan=2)
+
+    manage_label = tk.Label(root, text="------------------------------ MANAGE DATA ------------------------------", width=40, font=('Courier', 10, 'bold'))
+    manage_label.grid(row=9, column=0, pady=10, columnspan=2)
 
     # Create Entry
     symbol_input = tk.Entry(root, width=20)
     symbol_input.grid(row=0, column=1)
     price_input = tk.Entry(root, width=20)
     price_input.grid(row=1, column=1)
-    manage_id_input = tk.Entry(root, width=20)
-    manage_id_input.grid(row=3, column=1)
+
 
     # Create Buttons
     addButton = tk.Button(root,
                           text="ADD SYMBOL & PRICE",
                           command=add,
-                          width=50)
+                          width=50,
+                          bg='#696969',
+                          fg='white')
     addButton.grid(row=2, column=0, columnspan=2, padx=10, pady=5)
     modify_watchlist_btn = tk.Button(root,
                            text="MODIFY A SELECTED ALERT FROM WATCH-LIST",
-                           command=manage,
-                           width=50)
-    modify_watchlist_btn.grid(row=7, column=0, columnspan=2, padx=10, pady=5)
+                           command=manage_watchlist,
+                           width=50,
+                           bg='#4169E1',
+                           fg='white')
+    modify_watchlist_btn.grid(row=5, column=0, columnspan=2, padx=10, pady=5)
+
     modify_buylist_btn = tk.Button(root,
                             text="MODIFY A SELECTED ALERT FROM BUY-LIST",
-                            command=remove_selected,
-                            width=50)
-    modify_buylist_btn.grid(row=10, column=0, columnspan=2, padx=10, pady=5)
+                            command=manage_buylist,
+                            width=50,
+                            bg='#4169E1',
+                            fg='white')
+    modify_buylist_btn.grid(row=8, column=0, columnspan=2, padx=10, pady=5)
 
     refresh_btn = tk.Button(root,
-                            text="REFRESH LISTS",
+                            text="REFRESH DATA",
                             command=refresh,
+                            bg="#1CA757",
+                            fg='white',
                             width=50)
     refresh_btn.grid(row=20, column=0, columnspan=2, padx=10, pady=5)
+
     reset_btn = tk.Button(root,
                           text="ERASE ALL DATA",
                           command=popup,
                           width=50,
-                          fg='red')
+                          bg='red',
+                          fg='white')
     reset_btn.grid(row=25, column=0, columnspan=2, padx=10, pady=5)
 
     if (os.path.exists(f'./{DB_NAME}')):
