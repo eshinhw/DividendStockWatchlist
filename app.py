@@ -2,7 +2,7 @@ import sqlite3
 import tkinter as tk
 import datetime as dt
 from tkinter import ttk
-from PIL import Image, ImageTk
+# from PIL import Image, ImageTk
 from tkinter import messagebox
 import pandas_datareader.data as web
 
@@ -289,9 +289,9 @@ if __name__ == '__main__':
     root = tk.Tk()
     root.title("PY STOCK PRICE ALERT")
     root.geometry(ROOT_GEOMETRY_SIZE)
-    ico = Image.open("img/icon.png")
-    photo = ImageTk.PhotoImage(ico)
-    root.iconphoto(False, photo)
+    # ico = Image.open("img/icon.png")
+    # photo = ImageTk.PhotoImage(ico)
+    # root.iconphoto(False, photo)
 
     # Create Labels
     symbol = tk.Label(root, text="STOCK SYMBOL", width=15)
@@ -336,7 +336,5 @@ if __name__ == '__main__':
                           width=50,
                           fg='red')
     reset_btn.grid(row=25, column=0, columnspan=2, padx=10, pady=5)
-
-    query()
 
     root.mainloop()
