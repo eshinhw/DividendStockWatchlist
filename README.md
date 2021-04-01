@@ -29,8 +29,8 @@ There are three versions of the program.
 (Executable versions are not shared on GitHub, but you can create an executable with pyinstaller!)
 ```
 pip install pyinstaller
-One Directory: pyinstaller --onedir -w app.py
-One File: pyinstaller --onefile -w app.py
+pyinstaller --onedir -w app.py
+pyinstaller --onefile -w app.py
 ```
 
 I personally prefer to use oneDir version by creating a shortcut of the executable. If you move the original app.exe out of the directory it belongs, it's not going to run!
