@@ -6,23 +6,19 @@ As a stock investor, we want to buy stocks when they are cheap, but checking sto
 
 ## Demonstration (Version 2)
 
-![image](https://user-images.githubusercontent.com/41933169/113352725-ac9f2900-930a-11eb-8022-1516c9c6e899.png)
+<p align="center">
+  <img width="500" height="400" src="https://user-images.githubusercontent.com/41933169/113352725-ac9f2900-930a-11eb-8022-1516c9c6e899.png">
+</p>
 
 Graphic Interface has been updated with restructuring components on the program.
 
 ## Demonstration (Version 1)
 
-![image](https://user-images.githubusercontent.com/41933169/113233938-51b7f400-926e-11eb-9df5-05551ce61d80.png)
+<p align="center">
+  <img width="400" height="900" src="https://user-images.githubusercontent.com/41933169/113234192-cb4fe200-926e-11eb-80a2-824836db2d20.png">
+</p>
 
-When it first runs, there is no list. When you add a symbol and its alert price, two lists will be created.
-
-![image](https://user-images.githubusercontent.com/41933169/113234102-9e033400-926e-11eb-9bba-79856a98c39b.png)
-
-All expensive stocks which prices are higher than our alert prices are listed on WATCHLIST.
-
-![image](https://user-images.githubusercontent.com/41933169/113234192-cb4fe200-926e-11eb-80a2-824836db2d20.png)
-
-All cheap stocks which prices are cheaper than our alert prices are listed on BUYLIST. These are the stocks we should consider buying.
+When it first runs, there is no list. When you add a symbol and its alert price, two lists will be created. All expensive stocks which prices are higher than our alert prices are listed on WATCHLIST. All cheap stocks which prices are cheaper than our alert prices are listed on BUYLIST. These are the stocks we should consider buying.
 
 ## Installation
 
