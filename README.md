@@ -4,19 +4,25 @@
 
 As a stock investor, we want to buy stocks when they are cheap, but checking stock prices every day is quite time consuming and unproductive. We can use **PyStockPriceAlert** to set up alerts on the stocks we are interested in buying. It extracts a list of companies which stock prices are lower than our predetermined prices. All we need to do is buy the stocks in the list.
 
-## Demonstration
+## Demonstration (Version 2)
 
-![image](https://user-images.githubusercontent.com/41933169/113233938-51b7f400-926e-11eb-9df5-05551ce61d80.png)
+<p align="center">
+  <img width="700" height="600" src="https://user-images.githubusercontent.com/41933169/113353318-77470b00-930b-11eb-8ac6-a74c02284551.png">
+</p>
 
-When it first runs, there is no list. When you add a symbol and its alert price, two lists will be created.
+- Graphic Interface has been updated with restructuring components on the program.
+- Refresh status bar has been added.
+- Automatic refresh data functionality has been added which updates price data during market hours (Mon-Fri 8am - 4pm).
 
-![image](https://user-images.githubusercontent.com/41933169/113234102-9e033400-926e-11eb-9bba-79856a98c39b.png)
+## Demonstration (Version 1)
 
-All expensive stocks which prices are higher than our alert prices are listed on WATCHLIST.
+<p align="center">
+  <img width="400" height="900" src="https://user-images.githubusercontent.com/41933169/113234192-cb4fe200-926e-11eb-80a2-824836db2d20.png">
+</p>
 
-![image](https://user-images.githubusercontent.com/41933169/113234192-cb4fe200-926e-11eb-80a2-824836db2d20.png)
-
-All cheap stocks which prices are cheaper than our alert prices are listed on BUYLIST. These are the stocks we should consider buying.
+- When it first runs, there is no list. When you add a symbol and its alert price, two lists will be created.
+- All expensive stocks which prices are higher than our alert prices are listed on WATCHLIST. 
+- All cheap stocks which prices are cheaper than our alert prices are listed on BUYLIST. These are the stocks we should consider buying.
 
 ## Installation
 
@@ -39,7 +45,7 @@ In terms of storing data, it automatically create a database called 'stocks.db' 
 
 ## Improvements
 
-- Currently, price data is updated based on daily prices. It would be helpful if we can retrieve real-time price data so that we can be informed during the market hours.
-- To refresh the data, we have to hit 'REFRESH LISTS' to update the price data in our database. It would be great if it automatically run refresh every fixed interval.
+- ~~Currently, price data is updated based on daily prices. It would be helpful if we can retrieve real-time price data so that we can be informed during the market hours.~~
+- ~~To refresh the data, we have to hit 'REFRESH LISTS' to update the price data in our database. It would be great if it automatically run refresh every fixed interval.~~
 
 
