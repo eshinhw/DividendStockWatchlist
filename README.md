@@ -45,7 +45,7 @@ In terms of storing data, it automatically create a database called 'stocks.db' 
 
 ## Improvements
 
-- ~~Currently, price data is updated based on daily prices. It would be helpful if we can retrieve real-time price data so that we can be informed during the market hours.
-- ~~To refresh the data, we have to hit 'REFRESH LISTS' to update the price data in our database. It would be great if it automatically run refresh every fixed interval.
+- ~~Currently, price data is updated based on daily prices. It would be helpful if we can retrieve real-time price data so that we can be informed during the market hours.~~
+- ~~To refresh the data, we have to hit 'REFRESH LISTS' to update the price data in our database. It would be great if it automatically run refresh every fixed interval.~~
 
 
