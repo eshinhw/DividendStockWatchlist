@@ -10,7 +10,7 @@ import pandas_datareader.data as web
 # GLOBAL VARIABLES
 DB_NAME = 'stocks.db'
 TABLE_NAME = 'prices'
-ROOT_GEOMETRY_SIZE = '770x450'
+ROOT_GEOMETRY_SIZE = '760x450'
 MANAGER_GEOMETRY_SIZE = '180x180'
 
 
@@ -305,6 +305,27 @@ def refresh():
     db_connect.commit()
     db_connect.close()
     query()
+    refresh_status = tk.Label(root, text="Manually refreshed at " + dt.datetime.now().strftime("%Y/%m/%d %H:%M:%S"), anchor=tk.E)
+    refresh_status.grid(row=6, column=0, columnspan=6, sticky=tk.W + tk.E, padx=10)
+
+def auto_refresh():
+    if (dt.datetime.today().weekday() >= 0) and (dt.datetime.today().weekday() < 5): # market open days
+        now = dt.datetime.now()
+        market_open = now.replace(hour=8, minute=30)
+        market_close = now.replace(hour=16, minute=30)
+
+        print(now, market_open, market_close)
+
+        if market_open <= now <= market_close:
+            refresh()
+            #print(dt.datetime.time())
+            refresh_status = tk.Label(root, text="Refreshed at " + dt.datetime.now().strftime("%Y/%m/%d %H:%M:%S"), relief=tk.SUNKEN, anchor=tk.E)
+            refresh_status.grid(row=6, column=0, columnspan=6, sticky=tk.W + tk.E)
+            root.after(3000, auto_refresh)
+        else:
+            return
+
+
 
 def erase():
     db_connect = sqlite3.connect(DB_NAME)
@@ -352,14 +373,14 @@ if __name__ == '__main__':
                           width=50,
                           bg='#696969',
                           fg='white')
-    addButton.grid(row=2, column=0, columnspan=2, padx=10, pady=5)
+    addButton.grid(row=2, column=0, columnspan=2, pady=5)
     modify_watchlist_btn = tk.Button(root,
                            text="MODIFY A SELECTED ALERT FROM WATCH-LIST",
                            command=manage_watchlist,
                            width=50,
                            bg='#4169E1',
                            fg='white')
-    modify_watchlist_btn.grid(row=5, column=0, columnspan=2, padx=10, pady=5)
+    modify_watchlist_btn.grid(row=5, column=0, columnspan=2, pady=5)
 
     modify_buylist_btn = tk.Button(root,
                             text="MODIFY A SELECTED ALERT FROM BUY-LIST",
@@ -367,7 +388,7 @@ if __name__ == '__main__':
                             width=50,
                             bg='#4169E1',
                             fg='white')
-    modify_buylist_btn.grid(row=5, column=3, columnspan=2, padx=10, pady=5)
+    modify_buylist_btn.grid(row=5, column=3, columnspan=2, pady=5)
 
     refresh_btn = tk.Button(root,
                             text="REFRESH DATA",
@@ -375,7 +396,7 @@ if __name__ == '__main__':
                             bg="#1CA757",
                             fg='white',
                             width=50)
-    refresh_btn.grid(row=0, column=2, columnspan=2, rowspan=2, padx=10, pady=5)
+    refresh_btn.grid(row=0, column=2, columnspan=2, rowspan=2, pady=5)
 
     reset_btn = tk.Button(root,
                           text="ERASE ALL DATA",
@@ -383,9 +404,12 @@ if __name__ == '__main__':
                           width=50,
                           bg='red',
                           fg='white')
-    reset_btn.grid(row=1, column=2, columnspan=2, rowspan=2, padx=10, pady=5)
+    reset_btn.grid(row=1, column=2, columnspan=2, rowspan=2, pady=5)
+
+
 
     if (os.path.exists(f'./{DB_NAME}')):
         query()
 
+    auto_refresh()
     root.mainloop()
