@@ -1,3 +1,4 @@
+import os
 import sqlite3
 import tkinter as tk
 import datetime as dt
@@ -79,16 +80,28 @@ def add():
     query()
 
 
-def delete():
+def delete(oid):
     db_connect = sqlite3.connect(DB_NAME)
     c = db_connect.cursor()
 
-    c.execute(f"DELETE from {TABLE_NAME} WHERE oid=" + manage_id)
+    c.execute(f"DELETE from {TABLE_NAME} WHERE oid=" + str(oid))
 
     db_connect.commit()
     db_connect.close()
     query()
-    manager.destroy()
+    #manager.destroy()
+
+def remove_selected():
+    if len(watchlist_tree.selection()) > 0:
+        uid_watchlist_tree = watchlist_tree.item(watchlist_tree.focus())['values'][0]
+        delete(uid_watchlist_tree)
+        watchlist_tree.selection_clear()
+    if len(buylist_tree.selection()) > 0:
+        uid_buylist_tree = buylist_tree.item(buylist_tree.focus())['values'][0]
+        delete(uid_buylist_tree)
+        buylist_tree.selection_clear()
+
+    query()
 
 
 def save_change():
@@ -126,11 +139,20 @@ def manage():
         return
 
     manager = tk.Tk()
-    manager.title("SYMBOL MANAGER")
+    manager.title("MODIFY AN ALERT")
     manager.geometry(MANAGER_GEOMETRY_SIZE)
 
     db_connect = sqlite3.connect(DB_NAME)
     c = db_connect.cursor()
+
+    if len(watchlist_tree.selection()) > 0:
+        uid_watchlist_tree = watchlist_tree.item(watchlist_tree.focus())['values'][0]
+        delete(uid_watchlist_tree)
+        watchlist_tree.selection_clear()
+    if len(buylist_tree.selection()) > 0:
+        uid_buylist_tree = buylist_tree.item(buylist_tree.focus())['values'][0]
+        delete(uid_buylist_tree)
+        buylist_tree.selection_clear()
 
     c.execute(f"SELECT *, oid FROM {TABLE_NAME} WHERE oid=" + manage_id)
     records = c.fetchall()  # fetches all records
@@ -160,8 +182,6 @@ def manage():
                                 command=save_change,
                                 width=20)
     save_change_btn.grid(row=3, column=0, pady=10, columnspan=2)
-    del_btn = tk.Button(manager, text="DELETE", command=delete, width=20)
-    del_btn.grid(row=4, column=0, pady=10, columnspan=2)
 
     _clear_input()
 
@@ -173,45 +193,48 @@ def query():
     c.execute(f"SELECT *, oid FROM {TABLE_NAME}")
     records = c.fetchall()  # fetches all records
 
+    print(records)
     # Display Treeview
 
+    global watchlist_tree
     watchlist_tree = ttk.Treeview(root)
 
     # Define Columns
-    watchlist_tree['columns'] = ("ID", "SYMBOL", "ALERT PRICE",
+    watchlist_tree['columns'] = ("UID", "SYMBOL", "ALERT PRICE",
                                  "CURRENT PRICE")
 
     # Format Columns
     watchlist_tree.column("#0", width=0, stretch=tk.NO)
-    watchlist_tree.column("ID", anchor=tk.CENTER, width=60)
+    watchlist_tree.column("UID", anchor=tk.CENTER, width=55)
     watchlist_tree.column("SYMBOL", anchor=tk.CENTER, width=100)
     watchlist_tree.column("ALERT PRICE", anchor=tk.CENTER, width=100)
     watchlist_tree.column("CURRENT PRICE", anchor=tk.CENTER, width=100)
 
     # Create Headings
     watchlist_tree.heading("#0", text="", anchor=tk.CENTER)
-    watchlist_tree.heading("ID", text="ID", anchor=tk.CENTER)
+    watchlist_tree.heading("UID", text="UID", anchor=tk.CENTER)
     watchlist_tree.heading("SYMBOL", text="SYMBOL", anchor=tk.CENTER)
     watchlist_tree.heading("ALERT PRICE", text="ALERT PRICE", anchor=tk.CENTER)
     watchlist_tree.heading("CURRENT PRICE",
                            text="CURRENT PRICE",
                            anchor=tk.CENTER)
 
+    global buylist_tree
     buylist_tree = ttk.Treeview(root)
 
     # Define Columns
-    buylist_tree['columns'] = ("ID", "SYMBOL", "ALERT PRICE", "CURRENT PRICE")
+    buylist_tree['columns'] = ("UID", "SYMBOL", "ALERT PRICE", "CURRENT PRICE")
 
     # Format Columns
     buylist_tree.column("#0", width=0, stretch=tk.NO)
-    buylist_tree.column("ID", anchor=tk.CENTER, width=60)
+    buylist_tree.column("UID", anchor=tk.CENTER, width=55)
     buylist_tree.column("SYMBOL", anchor=tk.CENTER, width=100)
     buylist_tree.column("ALERT PRICE", anchor=tk.CENTER, width=100)
     buylist_tree.column("CURRENT PRICE", anchor=tk.CENTER, width=100)
 
     # Create Headings
     buylist_tree.heading("#0", text="", anchor=tk.CENTER)
-    buylist_tree.heading("ID", text="ID", anchor=tk.CENTER)
+    buylist_tree.heading("UID", text="UID", anchor=tk.CENTER)
     buylist_tree.heading("SYMBOL", text="SYMBOL", anchor=tk.CENTER)
     buylist_tree.heading("ALERT PRICE", text="ALERT PRICE", anchor=tk.CENTER)
     buylist_tree.heading("CURRENT PRICE",
@@ -223,22 +246,23 @@ def query():
         symbol_name = records[i][0]
         tPrice = records[i][1]
         currPrice = records[i][2]
+        uid = records[i][3]
         if currPrice <= tPrice:
             buylist_tree.insert(parent='',
                                 index='end',
                                 iid=i,
                                 text="",
-                                values=(i + 1, symbol_name, tPrice, currPrice))
+                                values=(uid, symbol_name, tPrice, currPrice))
         else:
             watchlist_tree.insert(parent='',
                                   index='end',
                                   iid=i,
                                   text="",
-                                  values=(i + 1, symbol_name, tPrice,
+                                  values=(uid, symbol_name, tPrice,
                                           currPrice))
 
     watchlist_tree.grid(row=6, column=0, columnspan=4, padx=10)
-    buylist_tree.grid(row=8, column=0, columnspan=4, padx=10)
+    buylist_tree.grid(row=9, column=0, columnspan=4, padx=10)
     db_connect.close()
 
 
@@ -275,7 +299,6 @@ def refresh():
     db_connect.close()
     query()
 
-
 def erase():
     db_connect = sqlite3.connect(DB_NAME)
     c = db_connect.cursor()
@@ -303,11 +326,11 @@ if __name__ == '__main__':
     target_price.grid(row=1, column=0, pady=10)
     manage_id_label = tk.Label(root, text="SYMBOL ID", width=15)
     manage_id_label.grid(row=3, column=0, pady=10)
-    watchlist = tk.Label(root, text="WATCHLIST", width=20)
+    watchlist = tk.Label(root, text="WATCH-LIST", width=20)
     watchlist.grid(row=5, column=0, pady=10, columnspan=2)
 
-    alert_reached = tk.Label(root, text="BUY LIST", width=20)
-    alert_reached.grid(row=7, column=0, pady=10, columnspan=2)
+    alert_reached = tk.Label(root, text="BUY-LIST", width=20)
+    alert_reached.grid(row=8, column=0, pady=10, columnspan=2)
 
     # Create Entry
     symbol_input = tk.Entry(root, width=20)
@@ -323,11 +346,17 @@ if __name__ == '__main__':
                           command=add,
                           width=50)
     addButton.grid(row=2, column=0, columnspan=2, padx=10, pady=5)
-    manage_btn = tk.Button(root,
-                           text="MANAGE SYMBOL ID",
+    modify_watchlist_btn = tk.Button(root,
+                           text="MODIFY A SELECTED ALERT FROM WATCH-LIST",
                            command=manage,
                            width=50)
-    manage_btn.grid(row=4, column=0, columnspan=2, padx=10, pady=5)
+    modify_watchlist_btn.grid(row=7, column=0, columnspan=2, padx=10, pady=5)
+    modify_buylist_btn = tk.Button(root,
+                            text="MODIFY A SELECTED ALERT FROM BUY-LIST",
+                            command=remove_selected,
+                            width=50)
+    modify_buylist_btn.grid(row=10, column=0, columnspan=2, padx=10, pady=5)
+
     refresh_btn = tk.Button(root,
                             text="REFRESH LISTS",
                             command=refresh,
@@ -339,5 +368,8 @@ if __name__ == '__main__':
                           width=50,
                           fg='red')
     reset_btn.grid(row=25, column=0, columnspan=2, padx=10, pady=5)
+
+    if (os.path.exists(f'./{DB_NAME}')):
+        query()
 
     root.mainloop()
