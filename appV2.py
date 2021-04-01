@@ -10,7 +10,7 @@ import pandas_datareader.data as web
 # GLOBAL VARIABLES
 DB_NAME = 'stocks.db'
 TABLE_NAME = 'prices'
-ROOT_GEOMETRY_SIZE = '380x900'
+ROOT_GEOMETRY_SIZE = '770x450'
 MANAGER_GEOMETRY_SIZE = '180x180'
 
 
@@ -268,8 +268,8 @@ def query():
                                   values=(uid, symbol_name, tPrice,
                                           currPrice))
 
-    watchlist_tree.grid(row=4, column=0, columnspan=4, padx=10)
-    buylist_tree.grid(row=7, column=0, columnspan=4, padx=10)
+    watchlist_tree.grid(row=4, column=0, columnspan=2, padx=10)
+    buylist_tree.grid(row=4, column=3, columnspan=2, padx=10)
     db_connect.close()
 
 
@@ -336,10 +336,7 @@ if __name__ == '__main__':
     watchlist.grid(row=3, column=0, pady=10, columnspan=2)
 
     alert_reached = tk.Label(root, text="------------------------------ BUY-LIST ------------------------------", width=40, font=('Courier', 10, 'bold'))
-    alert_reached.grid(row=6, column=0, pady=10, columnspan=2)
-
-    manage_label = tk.Label(root, text="------------------------------ MANAGE DATA ------------------------------", width=40, font=('Courier', 10, 'bold'))
-    manage_label.grid(row=9, column=0, pady=10, columnspan=2)
+    alert_reached.grid(row=3, column=3, pady=10, columnspan=2)
 
     # Create Entry
     symbol_input = tk.Entry(root, width=20)
@@ -370,7 +367,7 @@ if __name__ == '__main__':
                             width=50,
                             bg='#4169E1',
                             fg='white')
-    modify_buylist_btn.grid(row=8, column=0, columnspan=2, padx=10, pady=5)
+    modify_buylist_btn.grid(row=5, column=3, columnspan=2, padx=10, pady=5)
 
     refresh_btn = tk.Button(root,
                             text="REFRESH DATA",
@@ -378,7 +375,7 @@ if __name__ == '__main__':
                             bg="#1CA757",
                             fg='white',
                             width=50)
-    refresh_btn.grid(row=20, column=0, columnspan=2, padx=10, pady=5)
+    refresh_btn.grid(row=0, column=2, columnspan=2, rowspan=2, padx=10, pady=5)
 
     reset_btn = tk.Button(root,
                           text="ERASE ALL DATA",
@@ -386,7 +383,7 @@ if __name__ == '__main__':
                           width=50,
                           bg='red',
                           fg='white')
-    reset_btn.grid(row=25, column=0, columnspan=2, padx=10, pady=5)
+    reset_btn.grid(row=1, column=2, columnspan=2, rowspan=2, padx=10, pady=5)
 
     if (os.path.exists(f'./{DB_NAME}')):
         query()
