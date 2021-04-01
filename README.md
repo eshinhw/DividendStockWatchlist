@@ -7,7 +7,7 @@ As a stock investor, we want to buy stocks when they are cheap, but checking sto
 ## Demonstration (Version 2)
 
 <p align="center">
-  <img width="500" height="400" src="https://user-images.githubusercontent.com/41933169/113353318-77470b00-930b-11eb-8ac6-a74c02284551.png">
+  <img width="700" height="600" src="https://user-images.githubusercontent.com/41933169/113353318-77470b00-930b-11eb-8ac6-a74c02284551.png">
 </p>
 
 - Graphic Interface has been updated with restructuring components on the program.
