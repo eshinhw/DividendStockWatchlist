@@ -332,10 +332,10 @@ if __name__ == '__main__':
     target_price = tk.Label(root, text="ALERT PRICE", width=15)
     target_price.grid(row=1, column=0, pady=10)
 
-    watchlist = tk.Label(root, text="------------------------------ WATCH-LIST ------------------------------", width=40, font=('Courier', 10, 'bold'))
+    watchlist = tk.Label(root, text=":::::::::::::::::::::::::::::::: WATCH-LIST ::::::::::::::::::::::::::::::::", width=40, font=('Courier', 10, 'bold'))
     watchlist.grid(row=3, column=0, pady=10, columnspan=2)
 
-    alert_reached = tk.Label(root, text="------------------------------ BUY-LIST ------------------------------", width=40, font=('Courier', 10, 'bold'))
+    alert_reached = tk.Label(root, text=":::::::::::::::::::::::::::::::: BUY-LIST ::::::::::::::::::::::::::::::::", width=40, font=('Courier', 10, 'bold'))
     alert_reached.grid(row=3, column=3, pady=10, columnspan=2)
 
     # Create Entry
