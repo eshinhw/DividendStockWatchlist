@@ -259,14 +259,13 @@ def query():
                                 index='end',
                                 iid=i,
                                 text="",
-                                values=(uid, symbol_name, tPrice, currPrice))
+                                values=(uid, symbol_name, "$ " + str(tPrice), "$ " + str(currPrice)))
         else:
             watchlist_tree.insert(parent='',
                                   index='end',
                                   iid=i,
                                   text="",
-                                  values=(uid, symbol_name, tPrice,
-                                          currPrice))
+                                  values=(uid, symbol_name, "$ " + str(tPrice), "$ " + str(currPrice)))
 
     watchlist_tree.grid(row=4, column=0, columnspan=2, padx=10)
     buylist_tree.grid(row=4, column=3, columnspan=2, padx=10)
@@ -305,7 +304,7 @@ def refresh():
     db_connect.commit()
     db_connect.close()
     query()
-    refresh_status = tk.Label(root, text="Manually refreshed at " + dt.datetime.now().strftime("%Y/%m/%d %H:%M:%S"), anchor=tk.E)
+    refresh_status = tk.Label(root, text="Manually Refreshed at " + dt.datetime.now().strftime("%Y/%m/%d %H:%M:%S"), anchor=tk.E)
     refresh_status.grid(row=6, column=0, columnspan=6, sticky=tk.W + tk.E, padx=10)
 
 def auto_refresh():
@@ -319,7 +318,7 @@ def auto_refresh():
         if market_open <= now <= market_close:
             refresh()
             #print(dt.datetime.time())
-            refresh_status = tk.Label(root, text="Refreshed at " + dt.datetime.now().strftime("%Y/%m/%d %H:%M:%S"), relief=tk.SUNKEN, anchor=tk.E)
+            refresh_status = tk.Label(root, text="Automatically Refreshed at " + dt.datetime.now().strftime("%Y/%m/%d %H:%M:%S"), relief=tk.SUNKEN, anchor=tk.E)
             refresh_status.grid(row=6, column=0, columnspan=6, sticky=tk.W + tk.E)
             root.after(3000, auto_refresh)
         else:
