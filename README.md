@@ -7,10 +7,12 @@ As a stock investor, we want to buy stocks when they are cheap, but checking sto
 ## Demonstration (Version 2)
 
 <p align="center">
-  <img width="500" height="400" src="https://user-images.githubusercontent.com/41933169/113352725-ac9f2900-930a-11eb-8022-1516c9c6e899.png">
+  <img width="500" height="400" src="https://user-images.githubusercontent.com/41933169/113353318-77470b00-930b-11eb-8ac6-a74c02284551.png">
 </p>
 
-Graphic Interface has been updated with restructuring components on the program.
+- Graphic Interface has been updated with restructuring components on the program.
+- Refresh status bar has been added.
+- Automatic refresh data functionality has been added which updates price data during market hours (Mon-Fri 8am - 4pm).
 
 ## Demonstration (Version 1)
 
@@ -18,7 +20,9 @@ Graphic Interface has been updated with restructuring components on the program.
   <img width="400" height="900" src="https://user-images.githubusercontent.com/41933169/113234192-cb4fe200-926e-11eb-80a2-824836db2d20.png">
 </p>
 
-When it first runs, there is no list. When you add a symbol and its alert price, two lists will be created. All expensive stocks which prices are higher than our alert prices are listed on WATCHLIST. All cheap stocks which prices are cheaper than our alert prices are listed on BUYLIST. These are the stocks we should consider buying.
+- When it first runs, there is no list. When you add a symbol and its alert price, two lists will be created.
+- All expensive stocks which prices are higher than our alert prices are listed on WATCHLIST. 
+- All cheap stocks which prices are cheaper than our alert prices are listed on BUYLIST. These are the stocks we should consider buying.
 
 ## Installation
 
@@ -41,7 +45,7 @@ In terms of storing data, it automatically create a database called 'stocks.db' 
 
 ## Improvements
 
-- Currently, price data is updated based on daily prices. It would be helpful if we can retrieve real-time price data so that we can be informed during the market hours.
-- To refresh the data, we have to hit 'REFRESH LISTS' to update the price data in our database. It would be great if it automatically run refresh every fixed interval.
+- ~~Currently, price data is updated based on daily prices. It would be helpful if we can retrieve real-time price data so that we can be informed during the market hours.
+- ~~To refresh the data, we have to hit 'REFRESH LISTS' to update the price data in our database. It would be great if it automatically run refresh every fixed interval.
 
 
