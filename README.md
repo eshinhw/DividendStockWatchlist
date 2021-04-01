@@ -4,7 +4,13 @@
 
 As a stock investor, we want to buy stocks when they are cheap, but checking stock prices every day is quite time consuming and unproductive. We can use **PyStockPriceAlert** to set up alerts on the stocks we are interested in buying. It extracts a list of companies which stock prices are lower than our predetermined prices. All we need to do is buy the stocks in the list.
 
-## Demonstration
+## Demonstration (Version 2)
+
+![image](https://user-images.githubusercontent.com/41933169/113352725-ac9f2900-930a-11eb-8022-1516c9c6e899.png)
+
+Graphic Interface has been updated with restructuring components on the program.
+
+## Demonstration (Version 1)
 
 ![image](https://user-images.githubusercontent.com/41933169/113233938-51b7f400-926e-11eb-9df5-05551ce61d80.png)
 
