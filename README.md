@@ -26,6 +26,13 @@ There are three versions of the program.
 - run executable called app.exe inside directory 'pyStockPriceAlert_oneDir' (running time is fast as all the required files are already decompressed)
 - run executable called app.exe inside directory 'pyStockPriceAlert_oneFile' (it takes some time to execute as it has to decompress all the required files)
 
+(Executable versions are not shared on GitHub, but you can create an executable with pyinstaller!)
+```
+pip install pyinstaller
+pyinstaller --onedir -w app.py
+pyinstaller --onefile -w app.py
+```
+
 I personally prefer to use oneDir version by creating a shortcut of the executable. If you move the original app.exe out of the directory it belongs, it's not going to run!
 
 In terms of storing data, it automatically create a database called 'stocks.db' within the same directory.
