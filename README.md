@@ -1,8 +1,21 @@
-# PyStockPriceAlert
+# Py Stock Manager
 
 ## Introduction
 
-As a stock investor, we want to buy stocks when they are cheap, but checking stock prices every day is quite time consuming and unproductive. We can use **PyStockPriceAlert** to set up alerts on the stocks we are interested in buying. It extracts a list of companies which stock prices are lower than our predetermined prices. All we need to do is buy the stocks in the list.
+As a stock investor, we want to buy stocks when they are cheap, but checking stock prices every day is quite time consuming and unproductive. We can use **PyStockManager** to set up alerts on the stocks we are interested in buying. It extracts a list of companies which stock prices are lower than our predetermined prices. All we need to do is buy the stocks in the list.
+
+## Demonstration (Version 2 Updated)
+<p align="center">
+  <img width="750" height="600" src="https://user-images.githubusercontent.com/41933169/113456074-42ee5000-93da-11eb-95c8-a8bb401643fa.png">
+</p>
+
+- Dividend Yield field in the list has been added.
+- Unselect button has been added.
+- It loads dividend data of stocks in S&P500 (previous year's annual dividend, stock symbols in S&P500)
+- It only accepts symbols in S&P500 for now since it loads and uses dividend data from S&P500 only.
+- We can expand the pool of stocks from just S&P500 using yfinance module. (will be implemented later)
+- Name changed from pyStockPriceAlert to PyStockManager to be more general.
+
 
 ## Demonstration (Version 2)
 
