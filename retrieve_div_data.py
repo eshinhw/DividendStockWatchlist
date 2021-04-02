@@ -39,9 +39,7 @@ def retrieve_div_data_sp500():
 
     div_data = {}
     count = 0
-    min_div_pay_years = 5
-
-    #sp500_symbols = ['HPQ']
+    min_div_pay_years = 20
 
     for symbol in sp500_symbols:
         count += 1
@@ -107,7 +105,6 @@ def retrieve_div_data_sp500():
 # ## Export & Save Dividend Data to JSON
 
 if __name__ == "__main__":
-
     with open('data/historical_div_sp500.json', 'w') as fp:
-        json.dump(div_data, fp)
+        json.dump(retrieve_div_data_sp500(), fp)
 

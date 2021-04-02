@@ -1,4 +1,5 @@
 import os
+import json
 import sqlite3
 import tkinter as tk
 import datetime as dt
@@ -10,15 +11,17 @@ import pandas_datareader.data as web
 # GLOBAL VARIABLES
 DB_NAME = 'stocks.db'
 TABLE_NAME = 'prices'
-ROOT_GEOMETRY_SIZE = '760x450'
+ROOT_GEOMETRY_SIZE = '960x490'
 MANAGER_GEOMETRY_SIZE = '180x180'
+DIV_DATA = json.load(open('data/historical_div_sp500.json', 'r'))
 
 
 def _get_close_price(symbol):
-    startDate = (dt.date.today() - dt.timedelta(days=1)).strftime("%Y-%m-%d")
+    startDate = (dt.date.today() - dt.timedelta(days=5)).strftime("%Y-%m-%d")
     endDate = dt.date.today().strftime("%Y-%m-%d")
     close = web.DataReader(symbol, 'yahoo', startDate,
                            endDate)['Adj Close'].iloc[-1].round(2)
+    #print(close)
     return close
 
 
@@ -49,10 +52,12 @@ def add():
         return messagebox.showwarning("WARNING!", "INVALID INPUT.")
     try:
         cp = _get_close_price(s)
+        last_year = dt.datetime.today().year - 1
+        div_yield = round(100 * DIV_DATA[s.upper()][0][str(last_year)] / cp, 3)
     except:
         _clear_input()
         return messagebox.showwarning("WARNING!",
-                                      "SYMBOL PROVIDED DOESN'T EXIST.")
+                                      "INCORRECT SYMBOL OR SYMBOL IS NOT IN S&P500.")
 
     db_connect = sqlite3.connect(DB_NAME)
     c = db_connect.cursor()
@@ -61,16 +66,18 @@ def add():
     c.execute(f"""CREATE TABLE IF NOT EXISTS {TABLE_NAME} (
         symbol text,
         target_price real,
-        current_price real
+        current_price real,
+        dividend_yield real
         ) """)
 
     # Insert into table
     c.execute(
-        f"INSERT INTO {TABLE_NAME} VALUES (:symbol, :target_price, :current_price)",
+        f"INSERT INTO {TABLE_NAME} VALUES (:symbol, :target_price, :current_price, :dividend_yield)",
         {
             'symbol': s.upper(),
             'target_price': tp,
-            'current_price': cp
+            'current_price': cp,
+            'dividend_yield': div_yield
         })
 
     _clear_input()
@@ -186,14 +193,26 @@ def manage_watchlist():
     if len(watchlist_tree.selection()) > 0:
         uid = watchlist_tree.item(watchlist_tree.focus())['values'][0]
         create_manager(uid)
-        watchlist_tree.selection_clear()
+        unselect_watchlist()
 
 def manage_buylist():
 
     if len(buylist_tree.selection()) > 0:
         uid = buylist_tree.item(buylist_tree.focus())['values'][0]
         create_manager(uid)
-        buylist_tree.selection_clear()
+        unselect_buylist()
+
+def unselect_watchlist():
+    if len(watchlist_tree.selection()) > 0:
+        for item in watchlist_tree.selection():
+            watchlist_tree.selection_remove(item)
+
+def unselect_buylist():
+    if len(buylist_tree.selection()) > 0:
+        for item in buylist_tree.selection():
+            buylist_tree.selection_remove(item)
+
+
 
 def query():
     db_connect = sqlite3.connect(DB_NAME)
@@ -202,6 +221,7 @@ def query():
     c.execute(f"SELECT *, oid FROM {TABLE_NAME}")
     records = c.fetchall()  # fetches all records
 
+    #print(records)
     # Display Treeview
 
     global watchlist_tree
@@ -209,7 +229,7 @@ def query():
 
     # Define Columns
     watchlist_tree['columns'] = ("UID", "SYMBOL", "ALERT PRICE",
-                                 "CURRENT PRICE")
+                                 "CURRENT PRICE", "DIVIDEND YIELD")
 
     # Format Columns
     watchlist_tree.column("#0", width=0, stretch=tk.NO)
@@ -217,6 +237,7 @@ def query():
     watchlist_tree.column("SYMBOL", anchor=tk.CENTER, width=100)
     watchlist_tree.column("ALERT PRICE", anchor=tk.CENTER, width=100)
     watchlist_tree.column("CURRENT PRICE", anchor=tk.CENTER, width=100)
+    watchlist_tree.column("DIVIDEND YIELD", anchor=tk.CENTER, width=100)
 
     # Create Headings
     watchlist_tree.heading("#0", text="", anchor=tk.CENTER)
@@ -226,11 +247,15 @@ def query():
     watchlist_tree.heading("CURRENT PRICE",
                            text="CURRENT PRICE",
                            anchor=tk.CENTER)
+    watchlist_tree.heading("DIVIDEND YIELD",
+                        text="DIVIDEND YIELD",
+                        anchor=tk.CENTER)
+
     global buylist_tree
     buylist_tree = ttk.Treeview(root)
 
     # Define Columns
-    buylist_tree['columns'] = ("UID", "SYMBOL", "ALERT PRICE", "CURRENT PRICE")
+    buylist_tree['columns'] = ("UID", "SYMBOL", "ALERT PRICE", "CURRENT PRICE", "DIVIDEND YIELD")
 
     # Format Columns
     buylist_tree.column("#0", width=0, stretch=tk.NO)
@@ -238,6 +263,7 @@ def query():
     buylist_tree.column("SYMBOL", anchor=tk.CENTER, width=100)
     buylist_tree.column("ALERT PRICE", anchor=tk.CENTER, width=100)
     buylist_tree.column("CURRENT PRICE", anchor=tk.CENTER, width=100)
+    buylist_tree.column("DIVIDEND YIELD", anchor=tk.CENTER, width=100)
 
     # Create Headings
     buylist_tree.heading("#0", text="", anchor=tk.CENTER)
@@ -247,27 +273,31 @@ def query():
     buylist_tree.heading("CURRENT PRICE",
                          text="CURRENT PRICE",
                          anchor=tk.CENTER)
+    buylist_tree.heading("DIVIDEND YIELD",
+                         text="DIVIDEND YIELD",
+                         anchor=tk.CENTER)
 
     # Add Data
     for i in range(len(records)):
         symbol_name = records[i][0]
         tPrice = records[i][1]
         currPrice = records[i][2]
-        uid = records[i][3]
+        div_yield = records[i][3]
+        uid = records[i][4]
 
-        print(symbol_name, tPrice, currPrice)
+        #print(symbol_name, tPrice, currPrice)
         if currPrice <= tPrice:
             buylist_tree.insert(parent='',
                                 index='end',
                                 iid=i,
                                 text="",
-                                values=(uid, symbol_name, "$ " + str(tPrice), "$ " + str(currPrice)))
+                                values=(uid, symbol_name, "$ " + str(tPrice), "$ " + str(currPrice), str(div_yield) + " %"))
         else:
             watchlist_tree.insert(parent='',
                                   index='end',
                                   iid=i,
                                   text="",
-                                  values=(uid, symbol_name, "$ " + str(tPrice), "$ " + str(currPrice)))
+                                  values=(uid, symbol_name, "$ " + str(tPrice), "$ " + str(currPrice), str(div_yield) + " %"))
 
     watchlist_tree.grid(row=4, column=0, columnspan=2, padx=10)
     buylist_tree.grid(row=4, column=3, columnspan=2, padx=10)
@@ -307,7 +337,7 @@ def refresh():
     db_connect.close()
     query()
     refresh_status = tk.Label(root, text="Data Refreshed Manually at " + dt.datetime.now().strftime("%Y/%m/%d %H:%M:%S"), anchor=tk.E)
-    refresh_status.grid(row=6, column=0, columnspan=6, sticky=tk.W + tk.E, padx=10)
+    refresh_status.grid(row=10, column=0, columnspan=6, sticky=tk.W + tk.E, padx=10)
 
 def auto_refresh():
     if (dt.datetime.today().weekday() >= 0) and (dt.datetime.today().weekday() < 5): # market open days
@@ -320,7 +350,7 @@ def auto_refresh():
         if market_open <= now <= market_close:
             refresh()
             refresh_status = tk.Label(root, text="Data Auto-Refreshed at " + dt.datetime.now().strftime("%Y/%m/%d %H:%M:%S"), anchor=tk.E)
-            refresh_status.grid(row=6, column=0, columnspan=6, sticky=tk.W + tk.E, padx=10)
+            refresh_status.grid(row=10, column=0, columnspan=6, sticky=tk.W + tk.E, padx=10)
             root.after(10000, auto_refresh)
         else:
             return
@@ -341,7 +371,7 @@ def erase():
 if __name__ == '__main__':
 
     root = tk.Tk()
-    root.title("PY STOCK PRICE ALERT")
+    root.title("PY STOCK MANAGER")
     root.geometry(ROOT_GEOMETRY_SIZE)
     # ico = Image.open("img/icon.png")
     # photo = ImageTk.PhotoImage(ico)
@@ -375,7 +405,7 @@ if __name__ == '__main__':
                           fg='white')
     addButton.grid(row=2, column=0, columnspan=2, pady=5)
     modify_watchlist_btn = tk.Button(root,
-                           text="MODIFY A SELECTED ALERT FROM WATCH-LIST",
+                           text="MODIFY A SELECTED ALERT IN WATCH-LIST",
                            command=manage_watchlist,
                            width=50,
                            bg='#4169E1',
@@ -383,12 +413,28 @@ if __name__ == '__main__':
     modify_watchlist_btn.grid(row=5, column=0, columnspan=2, pady=5)
 
     modify_buylist_btn = tk.Button(root,
-                            text="MODIFY A SELECTED ALERT FROM BUY-LIST",
+                            text="MODIFY A SELECTED ALERT IN BUY-LIST",
                             command=manage_buylist,
                             width=50,
                             bg='#4169E1',
                             fg='white')
     modify_buylist_btn.grid(row=5, column=3, columnspan=2, pady=5)
+
+    unselect_watchlist_btn = tk.Button(root,
+                           text="UNSELECT ALL IN WATCH-LIST",
+                           command=unselect_watchlist,
+                           width=50,
+                           bg='#4169E1',
+                           fg='white')
+    unselect_watchlist_btn.grid(row=6, column=0, columnspan=2, pady=5)
+
+    unselect_buylist_btn = tk.Button(root,
+                            text="UNSELECT ALL IN BUY-LIST",
+                            command=unselect_buylist,
+                            width=50,
+                            bg='#4169E1',
+                            fg='white')
+    unselect_buylist_btn.grid(row=6, column=3, columnspan=2, pady=5)
 
     refresh_btn = tk.Button(root,
                             text="REFRESH DATA",
@@ -410,7 +456,6 @@ if __name__ == '__main__':
 
     if (os.path.exists(f'./{DB_NAME}')):
         query()
-
 
     auto_refresh()
     root.mainloop()
