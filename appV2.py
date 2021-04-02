@@ -254,6 +254,8 @@ def query():
         tPrice = records[i][1]
         currPrice = records[i][2]
         uid = records[i][3]
+
+        print(symbol_name, tPrice, currPrice)
         if currPrice <= tPrice:
             buylist_tree.insert(parent='',
                                 index='end',
@@ -304,7 +306,7 @@ def refresh():
     db_connect.commit()
     db_connect.close()
     query()
-    refresh_status = tk.Label(root, text="Data Refreshed at " + dt.datetime.now().strftime("%Y/%m/%d %H:%M:%S"), anchor=tk.E)
+    refresh_status = tk.Label(root, text="Data Refreshed Manually at " + dt.datetime.now().strftime("%Y/%m/%d %H:%M:%S"), anchor=tk.E)
     refresh_status.grid(row=6, column=0, columnspan=6, sticky=tk.W + tk.E, padx=10)
 
 def auto_refresh():
@@ -317,7 +319,7 @@ def auto_refresh():
 
         if market_open <= now <= market_close:
             refresh()
-            refresh_status = tk.Label(root, text="Data Refreshed at " + dt.datetime.now().strftime("%Y/%m/%d %H:%M:%S"), anchor=tk.E)
+            refresh_status = tk.Label(root, text="Data Auto-Refreshed at " + dt.datetime.now().strftime("%Y/%m/%d %H:%M:%S"), anchor=tk.E)
             refresh_status.grid(row=6, column=0, columnspan=6, sticky=tk.W + tk.E, padx=10)
             root.after(10000, auto_refresh)
         else:
@@ -408,6 +410,7 @@ if __name__ == '__main__':
 
     if (os.path.exists(f'./{DB_NAME}')):
         query()
+
 
     auto_refresh()
     root.mainloop()
