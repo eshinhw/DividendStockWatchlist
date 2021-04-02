@@ -304,7 +304,7 @@ def refresh():
     db_connect.commit()
     db_connect.close()
     query()
-    refresh_status = tk.Label(root, text="Manually Refreshed at " + dt.datetime.now().strftime("%Y/%m/%d %H:%M:%S"), anchor=tk.E)
+    refresh_status = tk.Label(root, text="Data Refreshed at " + dt.datetime.now().strftime("%Y/%m/%d %H:%M:%S"), anchor=tk.E)
     refresh_status.grid(row=6, column=0, columnspan=6, sticky=tk.W + tk.E, padx=10)
 
 def auto_refresh():
@@ -313,14 +313,13 @@ def auto_refresh():
         market_open = now.replace(hour=8, minute=30)
         market_close = now.replace(hour=16, minute=30)
 
-        print(now, market_open, market_close)
+        #print(now, market_open, market_close)
 
         if market_open <= now <= market_close:
             refresh()
-            #print(dt.datetime.time())
-            refresh_status = tk.Label(root, text="Automatically Refreshed at " + dt.datetime.now().strftime("%Y/%m/%d %H:%M:%S"), relief=tk.SUNKEN, anchor=tk.E)
-            refresh_status.grid(row=6, column=0, columnspan=6, sticky=tk.W + tk.E)
-            root.after(3000, auto_refresh)
+            refresh_status = tk.Label(root, text="Data Refreshed at " + dt.datetime.now().strftime("%Y/%m/%d %H:%M:%S"), anchor=tk.E)
+            refresh_status.grid(row=6, column=0, columnspan=6, sticky=tk.W + tk.E, padx=10)
+            root.after(10000, auto_refresh)
         else:
             return
 
