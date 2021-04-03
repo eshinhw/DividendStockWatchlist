@@ -7,7 +7,7 @@ As a stock investor, we want to buy stocks when they are cheap, but checking sto
 ## Demonstration (Version 3)
 
 <p align="center">
-  <img width="750" height="600" src="https://user-images.githubusercontent.com/41933169/113467118-e5282b00-940e-11eb-98f7-b9404deb4cc8.png">
+  <img width="750" height="600" src="https://user-images.githubusercontent.com/41933169/113484014-3f0f0c00-9474-11eb-8015-7a2fda71f900.png">
 </p>
 
 - 10-Yrs Historical Average Dividend Yield feature has been added to compare with current dividend yield.
