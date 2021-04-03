@@ -4,6 +4,17 @@
 
 As a stock investor, we want to buy stocks when they are cheap, but checking stock prices every day is quite time consuming and unproductive. We can use **PyStockManager** to set up alerts on the stocks we are interested in buying. It extracts a list of companies which stock prices are lower than our predetermined prices. All we need to do is buy the stocks in the list.
 
+## Demonstration (Version 3)
+
+<p align="center">
+  <img width="750" height="600" src="https://user-images.githubusercontent.com/41933169/113467118-e5282b00-940e-11eb-98f7-b9404deb4cc8.png">
+</p>
+
+- 10-Yrs Historical Average Dividend Yield feature has been added to compare with current dividend yield.
+- If current dividend yield is higher than historical average dividend yield, we may assume that the stock is under-valued and it's time to buy.
+
+
+
 ## Demonstration (Version 2 Updated)
 <p align="center">
   <img width="750" height="600" src="https://user-images.githubusercontent.com/41933169/113456074-42ee5000-93da-11eb-95c8-a8bb401643fa.png">
