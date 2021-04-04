@@ -4,6 +4,14 @@
 
 As a stock investor, we want to buy stocks when they are cheap, but checking stock prices every day is quite time consuming and unproductive. We can use **PyStockManager** to set up alerts on the stocks we are interested in buying. It extracts a list of companies which stock prices are lower than our predetermined prices. All we need to do is buy the stocks in the list.
 
+## Demonstration (Version 3 Updated with Export to CSV Feature)
+
+<p align="center">
+  <img width="750" height="600" src="https://user-images.githubusercontent.com/41933169/113522217-cf307c80-956c-11eb-9b66-98c7e357e76b.png">
+</p>
+
+- Data can be exported to csv file automatically saved in current working directory.
+
 ## Demonstration (Version 3)
 
 <p align="center">
