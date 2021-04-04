@@ -1,4 +1,5 @@
 import os
+import csv
 import json
 import sqlite3
 import tkinter as tk
@@ -11,7 +12,8 @@ import pandas_datareader.data as web
 # GLOBAL VARIABLES
 DB_NAME = 'stocks.db'
 TABLE_NAME = 'prices'
-ROOT_GEOMETRY_SIZE = '960x490'
+EXPORT_NAME = 'pydivStocks.csv'
+ROOT_GEOMETRY_SIZE = '900x520'
 MANAGER_GEOMETRY_SIZE = '180x180'
 DIV_DATA = json.load(open('data/historical_div_sp500.json', 'r'))
 
@@ -55,7 +57,7 @@ def _clear_input():
 
 def popup():
     response = messagebox.askyesnocancel(
-        "Deleting All Data...", "Are you sure you want to delete all data?")
+        "Deleting All Data", "Are you sure you want to delete all data?")
     if response == True:
         erase()
     elif response == False:
@@ -246,7 +248,7 @@ def query():
     c.execute(f"SELECT *, oid FROM {TABLE_NAME}")
     records = c.fetchall()  # fetches all records
 
-    print(records)
+    #print(records)
     # Display Treeview
 
     global watchlist_tree
@@ -340,14 +342,25 @@ def query():
     db_connect.close()
 
 
-def export():
-    db_connect = sqlite3.connect(DB_NAME)
-    c = db_connect.cursor()
+def export_to_csv():
+    response = messagebox.askyesnocancel(
+        "Exporting Data to CSV", "Are you sure to export data in current working directory?")
+    if response == True:
+        with open(f'./data/{EXPORT_NAME}', 'w', newline='') as stockCSV:
 
-    c.execute(f"SELECT * FROM {TABLE_NAME}")
-    data = c.fetchall()
-    return data
+            csv_out = csv.writer(stockCSV)
+            csv_out.writerow(['Symbol', 'AlertPrice', 'CurrentPrice', 'CurrentDividendYield', '10YAvgDivYield'])
+            db_connect = sqlite3.connect(DB_NAME)
+            c = db_connect.cursor()
 
+            for row in c.execute(f"SELECT * FROM {TABLE_NAME}"):
+                csv_out.writerow(row)
+
+            db_connect.close()
+    elif response == False:
+        return
+    else:
+        return
 
 def refresh():
     db_connect = sqlite3.connect(DB_NAME)
@@ -357,12 +370,13 @@ def refresh():
 
     for i in range(len(records)):
         symbol = records[i][0]
-        currPrice = _get_close_price(symbol)
+        (currPrice, _) = _get_close_and_historical_div_yield(symbol)
         uid = records[i][3]
         #print(f"symbol: {symbol} | currPrice: {currPrice} | oid: {records[i][3]}")
         c.execute(
             f"""UPDATE {TABLE_NAME} SET
                 current_price = :cp
+
                 WHERE oid = :oid
                 """, {
                 'cp': currPrice,
@@ -439,14 +453,14 @@ if __name__ == '__main__':
                           width=50,
                           bg='#696969',
                           fg='white')
-    addButton.grid(row=2, column=0, columnspan=2, pady=5)
+    addButton.grid(row=2, column=0, columnspan=2, pady=10)
     modify_watchlist_btn = tk.Button(root,
                            text="MODIFY A SELECTED ALERT IN WATCH-LIST",
                            command=manage_watchlist,
                            width=50,
                            bg='#4169E1',
                            fg='white')
-    modify_watchlist_btn.grid(row=5, column=0, columnspan=2, pady=5)
+    modify_watchlist_btn.grid(row=5, column=0, columnspan=2, pady=10)
 
     modify_buylist_btn = tk.Button(root,
                             text="MODIFY A SELECTED ALERT IN BUY-LIST",
@@ -454,7 +468,7 @@ if __name__ == '__main__':
                             width=50,
                             bg='#4169E1',
                             fg='white')
-    modify_buylist_btn.grid(row=5, column=3, columnspan=2, pady=5)
+    modify_buylist_btn.grid(row=5, column=3, columnspan=2, pady=10)
 
     unselect_watchlist_btn = tk.Button(root,
                            text="UNSELECT ALL IN WATCH-LIST",
@@ -462,7 +476,7 @@ if __name__ == '__main__':
                            width=50,
                            bg='#4169E1',
                            fg='white')
-    unselect_watchlist_btn.grid(row=6, column=0, columnspan=2, pady=5)
+    unselect_watchlist_btn.grid(row=6, column=0, columnspan=2, pady=10)
 
     unselect_buylist_btn = tk.Button(root,
                             text="UNSELECT ALL IN BUY-LIST",
@@ -470,25 +484,31 @@ if __name__ == '__main__':
                             width=50,
                             bg='#4169E1',
                             fg='white')
-    unselect_buylist_btn.grid(row=6, column=3, columnspan=2, pady=5)
+    unselect_buylist_btn.grid(row=6, column=3, columnspan=2, pady=10)
 
     refresh_btn = tk.Button(root,
-                            text="REFRESH DATA",
+                            text="REFRESH CURRENT PRICE DATA",
                             command=refresh,
                             bg="#1CA757",
                             fg='white',
                             width=50)
-    refresh_btn.grid(row=0, column=2, columnspan=3, rowspan=2, pady=5)
+    refresh_btn.grid(row=0, column=2, columnspan=3, pady=10)
+
+    export_btn = tk.Button(root,
+                            text="EXPORT DATA TO CSV",
+                            command=export_to_csv,
+                            bg="#9900e6",
+                            fg='white',
+                            width=50)
+    export_btn.grid(row=1, column=2, columnspan=3, pady=10)
 
     reset_btn = tk.Button(root,
-                          text="ERASE ALL DATA",
+                          text="RESET ALL DATA",
                           command=popup,
                           width=50,
                           bg='red',
                           fg='white')
-    reset_btn.grid(row=1, column=2, columnspan=3, rowspan=2, pady=5)
-
-
+    reset_btn.grid(row=2, column=2, columnspan=3, pady=10)
 
     if (os.path.exists(f'./{DB_NAME}')):
         query()
