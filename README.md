@@ -7,7 +7,7 @@ As a stock investor, we want to buy stocks when they are cheap, but checking sto
 ## Demonstration (Version 3 Updated with Export to CSV Feature)
 
 <p align="center">
-  <img width="750" height="600" src="https://user-images.githubusercontent.com/41933169/113522343-b96f8700-956d-11eb-9b80-47528c0b0a47.png">
+  <img width="900" height="600" src="https://user-images.githubusercontent.com/41933169/113522343-b96f8700-956d-11eb-9b80-47528c0b0a47.png">
 </p>
 
 - Data can be exported to csv file automatically saved in current working directory.
