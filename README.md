@@ -1,4 +1,4 @@
-# Py Stock Manager
+# Py Dividend Stock Manager
 
 ## Introduction
 
