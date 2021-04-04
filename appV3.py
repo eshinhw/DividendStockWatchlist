@@ -21,8 +21,6 @@ DIV_DATA = json.load(open('data/historical_div_sp500.json', 'r'))
 def _get_close_and_historical_div_yield(symbol):
     startDate = (dt.date.today() - dt.timedelta(days=(365*11))).strftime("%Y-%m-%d")
     endDate = dt.date.today().strftime("%Y-%m-%d")
-    #print(startDate)
-    #print(endDate)
     price_data = web.DataReader(symbol, 'yahoo', startDate,
                            endDate)
 
@@ -34,13 +32,11 @@ def _get_close_and_historical_div_yield(symbol):
 
     for year in range(start_year, last_year + 1):
         yearly_data = price_data['Close'][price_data.index.year == year]
-        #print(yearly_data)
         firstPrice = yearly_data.iloc[0]
         lastPrice = yearly_data.iloc[-1]
         yearly_avg_price = (firstPrice + lastPrice) / 2
         yearly_dividend_yield = DIV_DATA[symbol.upper()][0][str(year)] / yearly_avg_price
         dy_list.append(yearly_dividend_yield)
-        #print(year, firstPrice, lastPrice, yearly_avg_price, yearly_dividend_yield)
 
     historical_avg_dy = round((sum(dy_list) / len(dy_list)) * 100, 2)
     #print(historical_avg_dy)
@@ -346,7 +342,7 @@ def export_to_csv():
     response = messagebox.askyesnocancel(
         "Exporting Data to CSV", "Are you sure to export data in current working directory?")
     if response == True:
-        with open(f'./data/{EXPORT_NAME}', 'w', newline='') as stockCSV:
+        with open(f'./{EXPORT_NAME}', 'w', newline='') as stockCSV:
 
             csv_out = csv.writer(stockCSV)
             csv_out.writerow(['Symbol', 'AlertPrice', 'CurrentPrice', 'CurrentDividendYield', '10YAvgDivYield'])
@@ -421,7 +417,7 @@ def erase():
 if __name__ == '__main__':
 
     root = tk.Tk()
-    root.title("PY STOCK MANAGER")
+    root.title("PY DIVIDEND STOCK MANAGER")
     root.geometry(ROOT_GEOMETRY_SIZE)
     # ico = Image.open("img/icon.png")
     # photo = ImageTk.PhotoImage(ico)
