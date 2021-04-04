@@ -13,7 +13,7 @@ import pandas_datareader.data as web
 DB_NAME = 'stocks.db'
 TABLE_NAME = 'prices'
 EXPORT_NAME = 'pydivStocks.csv'
-ROOT_GEOMETRY_SIZE = '900x520'
+ROOT_GEOMETRY_SIZE = '1140x520'
 MANAGER_GEOMETRY_SIZE = '180x180'
 DIV_DATA = json.load(open('data/historical_div_sp500.json', 'r'))
 
@@ -257,11 +257,11 @@ def query():
     # Format Columns
     watchlist_tree.column("#0", width=0, stretch=tk.NO)
     watchlist_tree.column("ID", anchor=tk.CENTER, width=30)
-    watchlist_tree.column("SYMBOL", anchor=tk.CENTER, width=65)
-    watchlist_tree.column("ALERT PRICE", anchor=tk.CENTER, width=75)
-    watchlist_tree.column("MARKET PRICE", anchor=tk.CENTER, width=75)
-    watchlist_tree.column("CURRENT DIV Y", anchor=tk.CENTER, width=90)
-    watchlist_tree.column("10Y AVG DIV Y", anchor=tk.CENTER, width=90)
+    watchlist_tree.column("SYMBOL", anchor=tk.CENTER, width=75)
+    watchlist_tree.column("ALERT PRICE", anchor=tk.CENTER, width=90)
+    watchlist_tree.column("MARKET PRICE", anchor=tk.CENTER, width=90)
+    watchlist_tree.column("CURRENT DIV Y", anchor=tk.CENTER, width=130)
+    watchlist_tree.column("10Y AVG DIV Y", anchor=tk.CENTER, width=130)
 
     # Create Headings
     watchlist_tree.heading("#0", text="", anchor=tk.CENTER)
@@ -272,10 +272,10 @@ def query():
                            text="Market Price",
                            anchor=tk.CENTER)
     watchlist_tree.heading("CURRENT DIV Y",
-                        text="Current Div Y",
+                        text="Current Dividend Yield",
                         anchor=tk.CENTER)
     watchlist_tree.heading("10Y AVG DIV Y",
-                        text="10Y Avg Div Y",
+                        text="10Y Avg Dividend Yield",
                         anchor=tk.CENTER)
 
     global buylist_tree
@@ -287,11 +287,11 @@ def query():
     # Format Columns
     buylist_tree.column("#0", width=0, stretch=tk.NO)
     buylist_tree.column("ID", anchor=tk.CENTER, width=30)
-    buylist_tree.column("SYMBOL", anchor=tk.CENTER, width=65)
-    buylist_tree.column("ALERT PRICE", anchor=tk.CENTER, width=75)
-    buylist_tree.column("MARKET PRICE", anchor=tk.CENTER, width=75)
-    buylist_tree.column("CURRENT DIV Y", anchor=tk.CENTER, width=90)
-    buylist_tree.column("10Y AVG DIV Y", anchor=tk.CENTER, width=90)
+    buylist_tree.column("SYMBOL", anchor=tk.CENTER, width=75)
+    buylist_tree.column("ALERT PRICE", anchor=tk.CENTER, width=90)
+    buylist_tree.column("MARKET PRICE", anchor=tk.CENTER, width=90)
+    buylist_tree.column("CURRENT DIV Y", anchor=tk.CENTER, width=130)
+    buylist_tree.column("10Y AVG DIV Y", anchor=tk.CENTER, width=130)
 
     # Create Headings
     buylist_tree.heading("#0", text="", anchor=tk.CENTER)
@@ -302,10 +302,10 @@ def query():
                          text="Market Price",
                          anchor=tk.CENTER)
     buylist_tree.heading("CURRENT DIV Y",
-                         text="Current Div Y",
+                         text="Current Dividend Yield",
                          anchor=tk.CENTER)
     buylist_tree.heading("10Y AVG DIV Y",
-                         text="10Y Avg Div Y",
+                         text="10Y Avg Dividend Yield",
                          anchor=tk.CENTER)
 
     # Add Data
