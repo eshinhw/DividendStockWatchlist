@@ -19,10 +19,11 @@ DIV_DATA = json.load(open('data/historical_div_sp500.json', 'r'))
 
 
 def _get_close_and_historical_div_yield(symbol):
-    startDate = (dt.date.today() - dt.timedelta(days=(365*11))).strftime("%Y-%m-%d")
+    startDate = (dt.date.today() - dt.timedelta(days=(365*11))
+                 ).strftime("%Y-%m-%d")
     endDate = dt.date.today().strftime("%Y-%m-%d")
     price_data = web.DataReader(symbol, 'yahoo', startDate,
-                           endDate)
+                                endDate)
 
     # compute 5 years average dividend yield
     start_year = price_data.index[0].year + 1
@@ -35,14 +36,15 @@ def _get_close_and_historical_div_yield(symbol):
         firstPrice = yearly_data.iloc[0]
         lastPrice = yearly_data.iloc[-1]
         yearly_avg_price = (firstPrice + lastPrice) / 2
-        yearly_dividend_yield = DIV_DATA[symbol.upper()][0][str(year)] / yearly_avg_price
+        yearly_dividend_yield = DIV_DATA[symbol.upper()][0][str(
+            year)] / yearly_avg_price
         dy_list.append(yearly_dividend_yield)
 
     historical_avg_dy = round((sum(dy_list) / len(dy_list)) * 100, 2)
-    #print(historical_avg_dy)
+    # print(historical_avg_dy)
 
     close = price_data['Adj Close'].iloc[-1].round(2)
-    #print(close)
+    # print(close)
     return (close, historical_avg_dy)
 
 
@@ -113,19 +115,22 @@ def delete():
     db_connect = sqlite3.connect(DB_NAME)
     c = db_connect.cursor()
 
-    c.execute(f"DELETE from {TABLE_NAME} WHERE oid=" + str(uid_from_create_manager))
+    c.execute(f"DELETE from {TABLE_NAME} WHERE oid=" +
+              str(uid_from_create_manager))
 
     db_connect.commit()
     db_connect.close()
     query()
     manager.destroy()
 
+
 def remove_selected():
     if len(watchlist_tree.selection()) > 0:
         #uid_watchlist_tree = watchlist_tree.item(watchlist_tree.focus())['values'][0]
         db_connect = sqlite3.connect(DB_NAME)
         c = db_connect.cursor()
-        c.execute(f"DELETE from {TABLE_NAME} WHERE oid=" + str(uid_from_create_manager))
+        c.execute(f"DELETE from {TABLE_NAME} WHERE oid=" +
+                  str(uid_from_create_manager))
         db_connect.commit()
         db_connect.close()
         watchlist_tree.selection_clear()
@@ -133,7 +138,8 @@ def remove_selected():
         #uid_buylist_tree = buylist_tree.item(buylist_tree.focus())['values'][0]
         db_connect = sqlite3.connect(DB_NAME)
         c = db_connect.cursor()
-        c.execute(f"DELETE from {TABLE_NAME} WHERE oid=" + str(uid_from_create_manager))
+        c.execute(f"DELETE from {TABLE_NAME} WHERE oid=" +
+                  str(uid_from_create_manager))
         db_connect.commit()
         db_connect.close()
         buylist_tree.selection_clear()
@@ -161,6 +167,7 @@ def save_change():
     db_connect.close()
     query()
     manager.destroy()
+
 
 def create_manager(uid):
     global uid_from_create_manager
@@ -204,12 +211,13 @@ def create_manager(uid):
     save_change_btn.grid(row=3, column=0, pady=10, columnspan=2)
 
     delete_btn = tk.Button(manager,
-                                text="DELETE THIS ALERT",
-                                command=delete,
-                                width=20)
+                           text="DELETE THIS ALERT",
+                           command=delete,
+                           width=20)
     delete_btn.grid(row=4, column=0, pady=10, columnspan=2)
 
     _clear_input()
+
 
 def manage_watchlist():
 
@@ -218,6 +226,7 @@ def manage_watchlist():
         create_manager(uid)
         unselect_watchlist()
 
+
 def manage_buylist():
 
     if len(buylist_tree.selection()) > 0:
@@ -225,16 +234,17 @@ def manage_buylist():
         create_manager(uid)
         unselect_buylist()
 
+
 def unselect_watchlist():
     if len(watchlist_tree.selection()) > 0:
         for item in watchlist_tree.selection():
             watchlist_tree.selection_remove(item)
 
+
 def unselect_buylist():
     if len(buylist_tree.selection()) > 0:
         for item in buylist_tree.selection():
             buylist_tree.selection_remove(item)
-
 
 
 def query():
@@ -244,7 +254,7 @@ def query():
     c.execute(f"SELECT *, oid FROM {TABLE_NAME}")
     records = c.fetchall()  # fetches all records
 
-    #print(records)
+    # print(records)
     # Display Treeview
 
     global watchlist_tree
@@ -272,17 +282,18 @@ def query():
                            text="Market Price",
                            anchor=tk.CENTER)
     watchlist_tree.heading("CURRENT DIV Y",
-                        text="Current Dividend Yield",
-                        anchor=tk.CENTER)
+                           text="Current Dividend Yield",
+                           anchor=tk.CENTER)
     watchlist_tree.heading("10Y AVG DIV Y",
-                        text="10Y Avg Dividend Yield",
-                        anchor=tk.CENTER)
+                           text="10Y Avg Dividend Yield",
+                           anchor=tk.CENTER)
 
     global buylist_tree
     buylist_tree = ttk.Treeview(root)
 
     # Define Columns
-    buylist_tree['columns'] = ("ID", "SYMBOL", "ALERT PRICE", "MARKET PRICE", "CURRENT DIV Y", "10Y AVG DIV Y")
+    buylist_tree['columns'] = (
+        "ID", "SYMBOL", "ALERT PRICE", "MARKET PRICE", "CURRENT DIV Y", "10Y AVG DIV Y")
 
     # Format Columns
     buylist_tree.column("#0", width=0, stretch=tk.NO)
@@ -332,7 +343,6 @@ def query():
                                   text="",
                                   values=(uid, symbol_name, "$ " + str(tPrice), "$ " + str(currPrice), str(div_yield) + " %", str(historical_div_yield) + " %"))
 
-
     watchlist_tree.grid(row=4, column=0, columnspan=2, padx=10)
     buylist_tree.grid(row=4, column=3, columnspan=2, padx=10)
     db_connect.close()
@@ -345,7 +355,8 @@ def export_to_csv():
         with open(f'./{EXPORT_NAME}', 'w', newline='') as stockCSV:
 
             csv_out = csv.writer(stockCSV)
-            csv_out.writerow(['Symbol', 'AlertPrice', 'CurrentPrice', 'CurrentDividendYield', '10YAvgDivYield'])
+            csv_out.writerow(['Symbol', 'AlertPrice', 'CurrentPrice',
+                             'CurrentDividendYield', '10YAvgDivYield'])
             db_connect = sqlite3.connect(DB_NAME)
             c = db_connect.cursor()
 
@@ -357,6 +368,7 @@ def export_to_csv():
         return
     else:
         return
+
 
 def refresh():
     db_connect = sqlite3.connect(DB_NAME)
@@ -382,11 +394,14 @@ def refresh():
     db_connect.commit()
     db_connect.close()
     query()
-    refresh_status = tk.Label(root, text="Data Refreshed Manually at " + dt.datetime.now().strftime("%Y/%m/%d %H:%M:%S"), anchor=tk.E)
-    refresh_status.grid(row=10, column=0, columnspan=6, sticky=tk.W + tk.E, padx=10)
+    refresh_status = tk.Label(root, text="Data Refreshed Manually at " +
+                              dt.datetime.now().strftime("%Y/%m/%d %H:%M:%S"), anchor=tk.E)
+    refresh_status.grid(row=10, column=0, columnspan=6,
+                        sticky=tk.W + tk.E, padx=10)
+
 
 def auto_refresh():
-    if (dt.datetime.today().weekday() >= 0) and (dt.datetime.today().weekday() < 5): # market open days
+    if (dt.datetime.today().weekday() >= 0) and (dt.datetime.today().weekday() < 5):  # market open days
         now = dt.datetime.now()
         market_open = now.replace(hour=8, minute=30)
         market_close = now.replace(hour=16, minute=30)
@@ -395,12 +410,13 @@ def auto_refresh():
 
         if market_open <= now <= market_close:
             refresh()
-            refresh_status = tk.Label(root, text="Data Auto-Refreshed at " + dt.datetime.now().strftime("%Y/%m/%d %H:%M:%S"), anchor=tk.E)
-            refresh_status.grid(row=10, column=0, columnspan=6, sticky=tk.W + tk.E, padx=10)
+            refresh_status = tk.Label(root, text="Data Auto-Refreshed at " +
+                                      dt.datetime.now().strftime("%Y/%m/%d %H:%M:%S"), anchor=tk.E)
+            refresh_status.grid(row=10, column=0, columnspan=6,
+                                sticky=tk.W + tk.E, padx=10)
             root.after(10000, auto_refresh)
         else:
             return
-
 
 
 def erase():
@@ -429,10 +445,12 @@ if __name__ == '__main__':
     target_price = tk.Label(root, text="ALERT PRICE", width=15)
     target_price.grid(row=1, column=0, pady=10)
 
-    watchlist = tk.Label(root, text=":::::::::::::::::::::::::::::::: WATCH-LIST ::::::::::::::::::::::::::::::::", width=40, font=('Courier', 10, 'bold'))
+    watchlist = tk.Label(root, text=":::::::::::::::::::::::::::::::: WATCH-LIST ::::::::::::::::::::::::::::::::",
+                         width=40, font=('Courier', 10, 'bold'))
     watchlist.grid(row=3, column=0, pady=10, columnspan=2)
 
-    alert_reached = tk.Label(root, text=":::::::::::::::::::::::::::::::: BUY-LIST ::::::::::::::::::::::::::::::::", width=40, font=('Courier', 10, 'bold'))
+    alert_reached = tk.Label(
+        root, text=":::::::::::::::::::::::::::::::: BUY-LIST ::::::::::::::::::::::::::::::::", width=40, font=('Courier', 10, 'bold'))
     alert_reached.grid(row=3, column=3, pady=10, columnspan=2)
 
     # Create Entry
@@ -440,7 +458,6 @@ if __name__ == '__main__':
     symbol_input.grid(row=0, column=1)
     price_input = tk.Entry(root, width=20)
     price_input.grid(row=1, column=1)
-
 
     # Create Buttons
     addButton = tk.Button(root,
@@ -451,35 +468,35 @@ if __name__ == '__main__':
                           fg='white')
     addButton.grid(row=2, column=0, columnspan=2, pady=10)
     modify_watchlist_btn = tk.Button(root,
-                           text="MODIFY A SELECTED ALERT IN WATCH-LIST",
-                           command=manage_watchlist,
-                           width=50,
-                           bg='#4169E1',
-                           fg='white')
+                                     text="MODIFY A SELECTED ALERT IN WATCH-LIST",
+                                     command=manage_watchlist,
+                                     width=50,
+                                     bg='#4169E1',
+                                     fg='white')
     modify_watchlist_btn.grid(row=5, column=0, columnspan=2, pady=10)
 
     modify_buylist_btn = tk.Button(root,
-                            text="MODIFY A SELECTED ALERT IN BUY-LIST",
-                            command=manage_buylist,
-                            width=50,
-                            bg='#4169E1',
-                            fg='white')
+                                   text="MODIFY A SELECTED ALERT IN BUY-LIST",
+                                   command=manage_buylist,
+                                   width=50,
+                                   bg='#4169E1',
+                                   fg='white')
     modify_buylist_btn.grid(row=5, column=3, columnspan=2, pady=10)
 
     unselect_watchlist_btn = tk.Button(root,
-                           text="UNSELECT ALL IN WATCH-LIST",
-                           command=unselect_watchlist,
-                           width=50,
-                           bg='#4169E1',
-                           fg='white')
+                                       text="UNSELECT ALL IN WATCH-LIST",
+                                       command=unselect_watchlist,
+                                       width=50,
+                                       bg='#4169E1',
+                                       fg='white')
     unselect_watchlist_btn.grid(row=6, column=0, columnspan=2, pady=10)
 
     unselect_buylist_btn = tk.Button(root,
-                            text="UNSELECT ALL IN BUY-LIST",
-                            command=unselect_buylist,
-                            width=50,
-                            bg='#4169E1',
-                            fg='white')
+                                     text="UNSELECT ALL IN BUY-LIST",
+                                     command=unselect_buylist,
+                                     width=50,
+                                     bg='#4169E1',
+                                     fg='white')
     unselect_buylist_btn.grid(row=6, column=3, columnspan=2, pady=10)
 
     refresh_btn = tk.Button(root,
@@ -491,11 +508,11 @@ if __name__ == '__main__':
     refresh_btn.grid(row=0, column=2, columnspan=3, pady=10)
 
     export_btn = tk.Button(root,
-                            text="EXPORT DATA TO CSV",
-                            command=export_to_csv,
-                            bg="#9900e6",
-                            fg='white',
-                            width=50)
+                           text="EXPORT DATA TO CSV",
+                           command=export_to_csv,
+                           bg="#9900e6",
+                           fg='white',
+                           width=50)
     export_btn.grid(row=1, column=2, columnspan=3, pady=10)
 
     reset_btn = tk.Button(root,
