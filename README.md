@@ -1,4 +1,4 @@
-# Dividend Stock Watchlist GUI App
+# Stock Watchlist GUI
 
 ## Introduction
 
