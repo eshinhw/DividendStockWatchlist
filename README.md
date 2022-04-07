@@ -1,4 +1,4 @@
-# Stock Watchlist GUI
+# Dividend Stock Watchlist
 
 ## Introduction
 
