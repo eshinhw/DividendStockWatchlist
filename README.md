@@ -25,7 +25,7 @@ I personally prefer to use oneDir version by creating a shortcut of the executab
 
 In terms of storing data, it automatically create a database called 'stocks.db' within the same directory.
 
-## Demonstration (Version 1)
+## Version 1 Initial Release
 
 <p align="center">
   <img width="400" height="900" src="https://user-images.githubusercontent.com/41933169/113234192-cb4fe200-926e-11eb-80a2-824836db2d20.png">
@@ -35,7 +35,7 @@ In terms of storing data, it automatically create a database called 'stocks.db' 
 - All expensive stocks which prices are higher than our alert prices are listed on WATCHLIST. 
 - All cheap stocks which prices are cheaper than our alert prices are listed on BUYLIST. These are the stocks we should consider buying.
 
-## Demonstration (Version 2)
+## Version 2 Initial
 
 <p align="center">
   <img width="700" height="600" src="https://user-images.githubusercontent.com/41933169/113353318-77470b00-930b-11eb-8ac6-a74c02284551.png">
@@ -46,7 +46,8 @@ In terms of storing data, it automatically create a database called 'stocks.db' 
 - Automatic refresh data functionality has been added which updates price data during market hours (Mon-Fri 8am - 4pm).
 
 
-## Demonstration (Version 2 Updated)
+## Version 2 Update
+
 <p align="center">
   <img width="750" height="600" src="https://user-images.githubusercontent.com/41933169/113456074-42ee5000-93da-11eb-95c8-a8bb401643fa.png">
 </p>
@@ -58,7 +59,7 @@ In terms of storing data, it automatically create a database called 'stocks.db' 
 - We can expand the pool of stocks from just S&P500 using yfinance module. (will be implemented later)
 - Name changed from pyStockPriceAlert to PyStockManager to be more general.
 
-## Demonstration (Version 3)
+## Version 3 Demo
 
 <p align="center">
   <img width="750" height="600" src="https://user-images.githubusercontent.com/41933169/113485112-05d99a80-947a-11eb-9479-89a691b8cac5.png">
@@ -67,7 +68,7 @@ In terms of storing data, it automatically create a database called 'stocks.db' 
 - 10-Yrs Historical Average Dividend Yield feature has been added to compare with current dividend yield.
 - If current dividend yield is higher than historical average dividend yield, we may assume that the stock is under-valued and it's time to buy.
 
-## Demonstration (Version 3 Updated with Export to CSV Feature)
+## Version 3 Update: Export to CSV Feature
 
 <p align="center">
   <img width="900" height="600" src="https://user-images.githubusercontent.com/41933169/113522343-b96f8700-956d-11eb-9b80-47528c0b0a47.png">
@@ -79,4 +80,3 @@ In terms of storing data, it automatically create a database called 'stocks.db' 
 
 - ~~Currently, price data is updated based on daily prices. It would be helpful if we can retrieve real-time price data so that we can be informed during the market hours.~~
 - ~~To refresh the data, we have to hit 'REFRESH LISTS' to update the price data in our database. It would be great if it automatically run refresh every fixed interval.~~
-- ANY SUGGESTIONS...?
