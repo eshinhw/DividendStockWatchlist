@@ -10,7 +10,7 @@ Additionally, it displays current dividend yield and 10 years average dividend y
 
 There are three versions of the program.
 
-- run app.py directly on CML if you have python installed.
+- run `app.py` directly on CML if you have python installed.
 - run executable called app.exe inside directory 'pyStockPriceAlert_oneDir' (running time is fast as all the required files are already decompressed)
 - run executable called app.exe inside directory 'pyStockPriceAlert_oneFile' (it takes some time to execute as it has to decompress all the required files)
 
@@ -25,7 +25,7 @@ I personally prefer to use oneDir version by creating a shortcut of the executab
 
 In terms of storing data, it automatically create a database called 'stocks.db' within the same directory.
 
-## Version 1 Initial Release
+## Version 1 Release
 
 <p align="center">
   <img width="400" height="900" src="https://user-images.githubusercontent.com/41933169/113234192-cb4fe200-926e-11eb-80a2-824836db2d20.png">
@@ -35,7 +35,7 @@ In terms of storing data, it automatically create a database called 'stocks.db' 
 - All expensive stocks which prices are higher than our alert prices are listed on WATCHLIST. 
 - All cheap stocks which prices are cheaper than our alert prices are listed on BUYLIST. These are the stocks we should consider buying.
 
-## Version 2 Initial
+## Version 2 Release
 
 <p align="center">
   <img width="700" height="600" src="https://user-images.githubusercontent.com/41933169/113353318-77470b00-930b-11eb-8ac6-a74c02284551.png">
@@ -59,7 +59,7 @@ In terms of storing data, it automatically create a database called 'stocks.db' 
 - We can expand the pool of stocks from just S&P500 using yfinance module. (will be implemented later)
 - Name changed from pyStockPriceAlert to PyStockManager to be more general.
 
-## Version 3 Demo
+## Version 3 Release
 
 <p align="center">
   <img width="750" height="600" src="https://user-images.githubusercontent.com/41933169/113485112-05d99a80-947a-11eb-9479-89a691b8cac5.png">
