@@ -1,4 +1,4 @@
-# Dividend King
+# Dividend Watchlist
 
 ## Introduction
 
