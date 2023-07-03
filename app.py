@@ -13,9 +13,9 @@ import yfinance as yf
 # GLOBAL VARIABLES
 DB_NAME = "stocks.db"
 TABLE_NAME = "prices"
-EXPORT_NAME = "pydivStocks.csv"
+EXPORT_NAME = "stocks.csv"
 ROOT_GEOMETRY_SIZE = "1140x520"
-MANAGER_GEOMETRY_SIZE = "180x180"
+MANAGER_GEOMETRY_SIZE = "270x250"
 DIV_DATA = json.load(open("data/historical_div_sp500.json", "r"))
 
 
