@@ -1,7 +1,7 @@
 # Dividend Watchlist
 
 <p align="center">
-  <img width="900" height="600" src="https://user-images.githubusercontent.com/41933169/113522343-b96f8700-956d-11eb-9b80-47528c0b0a47.png">
+  <img width="900" height="600" src="https://github.com/eshinhw/dividend-watchlist/assets/41933169/19fa10a2-9f13-48e6-a265-d1e10c22f94d">
 </p>
 
 ## Introduction
