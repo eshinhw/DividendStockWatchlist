@@ -1,4 +1,17 @@
-# Dividend Watchlist
+<div align="center">
+
+  ![coollogo_com-44991879](https://github.com/eshinhw/dividend-watchlist/assets/41933169/5fcf5b43-3377-41a4-98b1-1a5fc4a32b96)
+
+</div>
+
+<div align="center">
+
+  ![NPM](https://img.shields.io/npm/l/nextjs)
+  ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/eshinhw/dividend-watchlist)
+  ![GitHub issues](https://img.shields.io/github/issues/eshinhw/dividend-watchlist)
+  ![GitHub pull requests](https://img.shields.io/github/issues-pr/eshinhw/dividend-watchlist)
+  
+</div>
 
 <p align="center">
   <img width="900" height="600" src="https://github.com/eshinhw/dividend-watchlist/assets/41933169/19fa10a2-9f13-48e6-a265-d1e10c22f94d">
