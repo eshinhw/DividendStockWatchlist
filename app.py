@@ -433,7 +433,7 @@ def erase():
 if __name__ == '__main__':
 
     root = tk.Tk()
-    root.title("PY DIVIDEND STOCK MANAGER")
+    root.title("DIVIDIEND WATCHLIST")
     root.geometry(ROOT_GEOMETRY_SIZE)
     # ico = Image.open("img/icon.png")
     # photo = ImageTk.PhotoImage(ico)
