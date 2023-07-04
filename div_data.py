@@ -26,11 +26,8 @@ def sp500_symbols():
     return sp500_symbols_new
 
 
-# ## Retrieve Dividend Data
-
-
 def retrieve_div_data_sp500():
-    symbols = sp500_symbols()[:3]
+    symbols = sp500_symbols()
 
     div_data = {}
     count = 0
@@ -40,7 +37,7 @@ def retrieve_div_data_sp500():
         count += 1
         if count % 100 == 0:
             print(count)
-        # print(f"getting dividend data from {symbol}")
+        print(f"getting dividend data from {symbol}")
         annual_div = {}
         prices = yf.Ticker(symbol).history(period="max")
         dividends = prices[prices["Dividends"] > 0]
@@ -70,8 +67,6 @@ def retrieve_div_data_sp500():
             div_data[symbol].append(annual_div)
             div_data[symbol].append(additionals)
 
-    # ## Calculate Average Dividend Growth Rate Since Inception
-
     for symbol in div_data.keys():
         start_year = list(div_data[symbol][0].keys())[0]
         last_year = dt.datetime.today().year - 1
@@ -100,8 +95,6 @@ def retrieve_div_data_sp500():
 
     return div_data
 
-
-# ## Export & Save Dividend Data to JSON
 
 if __name__ == "__main__":
     with open("data/historical_div_sp500.json", "w") as fp:
