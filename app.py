@@ -4,6 +4,7 @@ import json
 import os
 import sqlite3
 import tkinter as tk
+
 # from PIL import Image, ImageTk
 from tkinter import messagebox, ttk
 
@@ -17,37 +18,6 @@ EXPORT_NAME = "stocks.csv"
 ROOT_GEOMETRY_SIZE = "1140x520"
 MANAGER_GEOMETRY_SIZE = "270x250"
 DIV_DATA = json.load(open("data/historical_div_sp500.json", "r"))
-
-
-# def _get_close_and_historical_div_yield(symbol):
-#     startDate = (dt.date.today() - dt.timedelta(days=(365 * 11))).strftime("%Y-%m-%d")
-#     endDate = dt.date.today().strftime("%Y-%m-%d")
-#     price_data = yf.Ticker(symbol).history(period="max")
-
-#     print(price_data)
-
-#     # # compute 5 years average dividend yield
-#     # start_year = price_data.index[0].year + 1
-#     # last_year = 2020
-
-#     # dy_list = []
-
-#     # for year in range(start_year, last_year + 1):
-#     #     yearly_data = price_data["Close"][price_data.index.year == year]
-#     #     firstPrice = yearly_data.iloc[0]
-#     #     lastPrice = yearly_data.iloc[-1]
-#     #     yearly_avg_price = (firstPrice + lastPrice) / 2
-#     #     yearly_dividend_yield = (
-#     #         DIV_DATA[symbol.upper()][0][str(year)] / yearly_avg_price
-#     #     )
-#     #     dy_list.append(yearly_dividend_yield)
-
-#     # historical_avg_dy = round((sum(dy_list) / len(dy_list)) * 100, 2)
-#     # # print(historical_avg_dy)
-
-#     # close = price_data["Adj Close"].iloc[-1].round(2)
-#     # # print(close)
-#     # return (close, historical_avg_dy)
 
 
 def clear_input():
@@ -66,10 +36,41 @@ def popup():
     else:
         return
 
+
 def get_current_price(symbol):
     price_data = yf.Ticker(symbol).history(period="max")
     close = price_data["Close"].iloc[-1].round(2)
     return close
+
+
+def get_historical_dividend_yield(symbol):
+    start_date = (dt.date.today() - dt.timedelta(days=(365 * 11))).strftime("%Y-%m-%d")
+    end_date = dt.date.today().strftime("%Y-%m-%d")
+    price_data = yf.Ticker(symbol).history(period="max")
+    print(start_date)
+    print(end_date)
+    print(price_data)
+
+    last_year = dt.date.today().year - 1
+    start_year = last_year - 10
+
+    print(start_year, last_year)
+
+    dy_list = []
+
+    for year in range(start_year, last_year + 1):
+        yearly_data = price_data["Close"][price_data.index.year == year]
+        firstPrice = yearly_data.iloc[0]
+        lastPrice = yearly_data.iloc[-1]
+        yearly_avg_price = (firstPrice + lastPrice) / 2
+        yearly_dividend_yield = (
+            DIV_DATA[symbol.upper()][0][str(year)] / yearly_avg_price
+        )
+        dy_list.append(yearly_dividend_yield)
+
+    historical_avg_dy = round((sum(dy_list) / len(dy_list)) * 100, 2)
+    return historical_avg_dy
+
 
 def add():
     # INPUT VALIDITY CHECK
@@ -77,13 +78,14 @@ def add():
     tp = price_input.get()
     if len(symbol) == 0 or len(tp) == 0:
         return
-    if (not str(tp).isnumeric()):
+    if not str(tp).isnumeric():
         clear_input()
         return messagebox.showwarning("WARNING!", "INVALID INPUT.")
-    
+
     try:
         current_price = get_current_price(symbol)
-        div_yield = round(100 * DIV_DATA[symbol.upper()][0]['2020'] / current_price, 2)
+        div_yield = round(100 * DIV_DATA[symbol.upper()][0]["2020"] / current_price, 2)
+        historical_div_yield = get_historical_dividend_yield(symbol)
     except:
         clear_input()
         return messagebox.showwarning(
@@ -112,7 +114,7 @@ def add():
             "target_price": tp,
             "current_price": current_price,
             "div_yield": div_yield,
-            "historical_avg_div_yield": 4.00,
+            "historical_avg_div_yield": historical_div_yield,
         },
     )
 
