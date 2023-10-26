@@ -18,11 +18,11 @@
 
 ## Project Motivation
 
-As dividend stock investors, we want to buy stocks when they are under-valued and their dividend yields are high. Dividend Watchlist helps keeping track of prices of dividend stocks and providing price alerts when they are under-valued. It organizes a list of companies which stock prices are lower than our predetermined prices in a buy list, and all we need to do is buy the stocks in the list.
+As dedicated dividend stock investors, our objective is to strategically acquire stocks at opportune moments when they are undervalued and their dividend yields are at their peak. The Dividend Watchlist serves as an investing assistant, diligently monitoring the prices of dividend-yielding stocks and promptly notifying us when they reach a favorable valuation. It meticulously curates a catalog of companies whose stock prices fall below our pre-established buy thresholds, streamlining our investment decisions.
 
-Additionally, it displays current dividend yield and 10 years average dividend yield to compare stock valuation. If current dividend yield is higher than historical average dividend yield, we can think of it as a buy signal since higher current yield tells us that that stock is attractive and generates higher dividend yield.
+Moreover, the app presents both the current dividend yield and the 10-year average dividend yield for comparative analysis of stock valuations. When the current dividend yield surpasses its historical average, it serves as a compelling buy signal, indicating that the stock is not only enticing but also promises a higher dividend yield.
 
-## Installation
+## How to Install
 
 There are three ways of running the program.
 
